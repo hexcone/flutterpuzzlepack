@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/animation.dart';
 
 class GameState {
@@ -7,9 +9,9 @@ class GameState {
     boardArr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
   }
 
-  List<List<int>> tap(int gestureDetectorIndex) {
+  List<List<int>> tap(int gestureDetectorIndex,  {int tileNum = -1}) {
     //handles tile movement logic
-    int tile = boardArr[gestureDetectorIndex];
+    int tile = tileNum == -1 ? boardArr[gestureDetectorIndex] : tileNum;
 
     //return [[tile-1, 2, 1, 0, 1]];
     if(tile == 16) {
@@ -137,6 +139,42 @@ class GameState {
 
     //default case where tile is in an unmovable position
     return [];
+  }
+
+  List<List<List<int>>> shuffleBoard(int depth) {
+    List<List<int>> animationListRow = [];
+    List<List<int>> animationListCol = [];
+    var rng = Random();
+    for(int i = 0; i < depth; i++) {
+      while (true) {
+        int direction = rng.nextInt(4);
+        int randomTileNum = -1;
+        if(direction == 0) {
+          randomTileNum = getTileAbove(16);
+        } else if(direction == 1) {
+          randomTileNum = getTileBelow(16);
+        } else if(direction == 2) {
+          randomTileNum = getTileLeft(16);
+        } else if(direction == 3) {
+          randomTileNum = getTileRight(16);
+        }
+
+        if(randomTileNum == -1) {
+            continue;
+        }
+        tap(-1, tileNum: randomTileNum); 
+        break;
+      }
+    }
+    for (int i=0;i<boardArr.length-1;i++){
+        int affectedTileIndex = findIndexOfTile(i+1);
+        int affectedTileRow = affectedTileIndex ~/ 4;
+        int affectedTileColumn = affectedTileIndex % 4;
+        animationListRow.add([i, affectedTileRow, 1, 0, 1]); 
+        animationListCol.add([i, affectedTileColumn, 0, 1, 1]); 
+    }
+    printBoard();
+    return [animationListRow, animationListCol];
   }
 
   void printBoard() {

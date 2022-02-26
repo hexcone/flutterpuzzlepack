@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/game_state.dart';
 import 'package:rive/rive.dart';
@@ -64,17 +65,28 @@ class _PuzzleState extends State<Puzzle> {
 
   List<Artboard>? _riveArtboard = [];
   StateMachineController? _controller;
+  RiveAnimationController? _controller2;
   List<SMIInput<bool>>? _moves = [], _rows = [], _columns = [];
   List<SMIInput<double>>? _indexes = [];
 
   GameState gs = GameState();
 
   bool gestureEnabled = true;
+  bool shuffled = false;
 
   @override
   void initState() {
     print("wtf");
     super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      print("WidgetsBinding");
+    });
+
+    SchedulerBinding.instance?.addPostFrameCallback((_) {
+      print("SchedulerBinding");
+      
+    });
 
     final assets = [
       'assets/english/Tile_01.riv',
@@ -101,7 +113,7 @@ class _PuzzleState extends State<Puzzle> {
       // download this. The RiveFile just expects a list of bytes.
       print("fuck");
       rootBundle.load(assets[i]).then(
-        (data) async {
+        (data) {
           // Load the RiveFile from the binary data.
           final file = RiveFile.import(data);
 
@@ -132,6 +144,9 @@ class _PuzzleState extends State<Puzzle> {
           setState(() => _riveArtboard = [..._riveArtboard!, artboard]);
         },
       );
+
+      
+
     }
   }
 
@@ -199,22 +214,30 @@ class _PuzzleState extends State<Puzzle> {
                 print("Click on GestureDetector: " + (index).toString());
                 print(animationPlaylist);
                 gs.printBoard();
-                gestureEnabled = false;
+                if(animationPlaylist.length > 0) {
+                  gestureEnabled = false;
+                }
                 for(int i=0;i<animationPlaylist.length;i++) {
                   
                     int affectedTileIndex = animationPlaylist[i][0];
+                    _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Hover'));
+                    _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
+                    print("yo" + (_indexes?[i].value).toString());
+                    _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
+                    _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
+                    _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
 
-                      _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
-                      print("yo" + (_indexes?[i].value).toString());
-                      _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
-                      _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
-                      _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
+                    if(gs.findIndexOfTile(affectedTileIndex + 1) == affectedTileIndex) {
+                      _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
+                    } else {
+                      _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
+                    }
                 }
               }
             },
             child:
             Opacity(
-              opacity: 0.3,
+              opacity: 0.01,
               child: Container(
                 height: tileDimension,
                 width: tileDimension,
@@ -248,6 +271,49 @@ class _PuzzleState extends State<Puzzle> {
 
     print("sw:" + screenWidth.toString());
     print("sh:" + screenHeight.toString());
+
+    Future.delayed(Duration(milliseconds: 1000),() {
+      if(!shuffled) {
+        //some action on complete
+        shuffled = true;
+        List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(100);
+        print(shuffleAnimationPlaylist);
+
+        setState(() {
+          for(int i=0;i<shuffleAnimationPlaylist[0].length;i++) {
+            
+              int affectedTileIndex = shuffleAnimationPlaylist[0][i][0];
+              _indexes?[affectedTileIndex].value = shuffleAnimationPlaylist[0][i][1].toDouble();
+              _rows?[affectedTileIndex].value = shuffleAnimationPlaylist[0][i][2] == 1 ? true : false;
+              _columns?[affectedTileIndex].value = shuffleAnimationPlaylist[0][i][3] == 1 ? true : false;
+              _moves?[affectedTileIndex].value = shuffleAnimationPlaylist[0][i][4] == 1 ? true : false;
+            
+          }
+          
+        });
+      Future.delayed(Duration(milliseconds: 2000),() {
+        setState(() {
+          for(int i=0;i<shuffleAnimationPlaylist[1].length;i++) {
+            
+              int affectedTileIndex = shuffleAnimationPlaylist[1][i][0];
+              _indexes?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][1].toDouble();
+              _rows?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][2] == 1 ? true : false;
+              _columns?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][3] == 1 ? true : false;
+              _moves?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][4] == 1 ? true : false;
+            
+          }
+
+          for(int i=0;i<_riveArtboard!.length;i++) {
+            if(gs.findIndexOfTile(i + 1) == i) {
+              _riveArtboard![i].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
+            } else {
+              _riveArtboard![i].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
+            }
+          }
+        });
+         });
+      }
+    }); 
 
     return Scaffold(
       backgroundColor: Colors.grey,
