@@ -1,13 +1,10 @@
-import 'dart:io';
 import 'dart:math';
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_1/game_state.dart';
 import 'package:rive/rive.dart';
 
+import 'game_logic.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,233 +30,121 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const Puzzle(title: 'Flutter Demo Home Page'),
+      home: const ExampleStateMachine(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class Puzzle extends StatefulWidget {
-  const Puzzle({Key? key, required this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+/// An example showing how to drive two boolean state machine inputs.
+class ExampleStateMachine extends StatefulWidget {
+  //const ExampleStateMachine({Key? key}) : super(key: key);
+  const ExampleStateMachine({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<Puzzle> createState() => _PuzzleState();
+  _ExampleStateMachineState createState() => _ExampleStateMachineState();
 }
 
-class _PuzzleState extends State<Puzzle> {
+class _ExampleStateMachineState extends State<ExampleStateMachine> {
   /// Tracks if the animation is playing by whether controller is running.
   bool get isPlaying => _controller?.isActive ?? false;
 
-  /// Message that displays when state has changed
-  String stateChangeMessage = '';
-
-  List<Artboard>? _riveArtboard = [];
+  Artboard? _riveArtboard;
   StateMachineController? _controller;
-  RiveAnimationController? _controller2;
-  List<SMIInput<bool>>? _moves = [], _rows = [], _columns = [];
-  List<SMIInput<double>>? _indexes = [];
-
-  GameState gs = GameState();
-
-  bool gestureEnabled = true;
-  bool shuffled = false;
+  SMIInput<double>? _actionInput;
 
   @override
   void initState() {
-    print("wtf");
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      print("WidgetsBinding");
-    });
+    // Load the animation file from the bundle, note that you could also
+    // download this. The RiveFile just expects a list of bytes.
+    rootBundle.load('assets/menu.riv').then(
+          (data) async {
+        // Load the RiveFile from the binary data.
+        final file = RiveFile.import(data);
 
-    SchedulerBinding.instance?.addPostFrameCallback((_) {
-      print("SchedulerBinding");
-      
-    });
-
-    final assets = [
-      'assets/english/Tile_01.riv',
-      'assets/english/Tile_02.riv',
-      'assets/english/Tile_03.riv',
-      'assets/english/Tile_04.riv',
-      'assets/english/Tile_05.riv',
-      'assets/english/Tile_06.riv',
-      'assets/english/Tile_07.riv',
-      'assets/english/Tile_08.riv',
-      'assets/english/Tile_09.riv',
-      'assets/english/Tile_10.riv',
-      'assets/english/Tile_11.riv',
-      'assets/english/Tile_12.riv',
-      'assets/english/Tile_13.riv',
-      'assets/english/Tile_14.riv',
-      'assets/english/Tile_15.riv',
-    ];
-
-    var controller;
-
-    for(int i = 0; i < assets.length; i++) {
-      // Load the animation file from the bundle, note that you could also
-      // download this. The RiveFile just expects a list of bytes.
-      print("fuck");
-      rootBundle.load(assets[i]).then(
-        (data) {
-          // Load the RiveFile from the binary data.
-          final file = RiveFile.import(data);
-
-          // The artboard is the root of the animation and gets drawn in the
-          // Rive widget.
-          final artboard = file.mainArtboard;
-          controller = StateMachineController.fromArtboard(
-            artboard,
-            'State Machine 1',
-            onStateChange: _onStateChange,
-          );
-          if (controller != null) {
-            artboard.addController(controller);
-            for (int k = 0 ; k<controller.inputs.length; k++) {
-              if(controller.inputs[k].name == "move") {
-                _moves?.add(controller.inputs[k]);
-              } else if (controller.inputs[k].name == "row") {
-                _rows?.add(controller.inputs[k]);
-              } else if (controller.inputs[k].name == "column") {
-                _columns?.add(controller.inputs[k]);
-              } else if (controller.inputs[k].name == "index") {
-                _indexes?.add(controller.inputs[k]);
-              }
-            }
-            print("biibi" + (_indexes?.length).toString());
-          }
-          print("dump");
-          setState(() => _riveArtboard = [..._riveArtboard!, artboard]);
-        },
-      );
-
-      
-
-    }
+        // The artboard is the root of the animation and gets drawn in the
+        // Rive widget.
+        final artboard = file.mainArtboard;
+        var controller =
+        StateMachineController.fromArtboard(artboard, 'State Machine 1');
+        if (controller != null) {
+          artboard.addController(controller);
+          _actionInput = controller.findInput('action');
+        }
+        setState(() => _riveArtboard = artboard);
+      },
+    );
   }
 
-  /// Do something when the state machine changes state
-  void _onStateChange(String stateMachineName, String stateName) => setState(
-        () {
-          stateChangeMessage = 'State Changed in $stateMachineName to $stateName';
-          if (stateName == "Reset") {
-            gestureEnabled = true;
-          }
-        },
-      );
-
-  Widget buildTileGrid(double tileDimension) {
-    if (_riveArtboard?.length == 0){
-      return SizedBox();
-    }
-    final items = [
-      Rive(artboard: _riveArtboard![12],), 
-      Rive(artboard: _riveArtboard![13],),
-      Rive(artboard: _riveArtboard![14],),
-      Rive(artboard: _riveArtboard![8],),
-      Rive(artboard: _riveArtboard![9],),
-      Rive(artboard: _riveArtboard![10],),
-      Rive(artboard: _riveArtboard![11],),
-      Rive(artboard: _riveArtboard![4],), 
-      Rive(artboard: _riveArtboard![5],),
-      Rive(artboard: _riveArtboard![6],),
-      Rive(artboard: _riveArtboard![7],),
-      Rive(artboard: _riveArtboard![0],),
-      Rive(artboard: _riveArtboard![1],),
-      Rive(artboard: _riveArtboard![2],),
-      Rive(artboard: _riveArtboard![3],),
-    ];
-
-    List<Widget> stackLayers = List<Widget>.generate(items.length, (index) {
-      return Padding(
-        //padding: EdgeInsets.only(left: index%4 * tileDimension, top: index~/4 * tileDimension, bottom: 0, right: 0),
-        padding: EdgeInsets.only(left: 0, top: 0, bottom: 0, right: 0),
-        child: 
-          Container(
-            height: tileDimension,
-            width: tileDimension,
-            child: items[index]
-          ),
-      );
-    });
-
-    return Stack(children: stackLayers);
+  Widget buildMenuGraphics(double dimension) {
+    return Container(
+        height: dimension,
+        width: dimension,
+        child: Rive(
+          artboard: _riveArtboard!,
+        )
+    );
   }
 
-  Widget buildGestureGrid(double screenDimension, double tileDimension) { 
-
-    double tileDimension = screenDimension * 0.62 / 4;
-    var rng = Random();
-    print("wah" + rng.nextInt(100).toString());
-    List<Widget> stackLayers = List<Widget>.generate(16, (index) {
+  Widget buildMenuGesture(double screenDimension) {
+    List<Widget> stackLayers = List<Widget>.generate(3, (index) {
       return Padding(
-        padding: EdgeInsets.only(left: index%4 * tileDimension + screenDimension * 0.20, top: index~/4 * tileDimension + screenDimension * 0.18, bottom: 0, right: 0),
-        child: 
+        padding: EdgeInsets.only(left: screenDimension * 0.315,
+            top: index * screenDimension * 0.130 + screenDimension * 0.3,
+            bottom: 0,
+            right: 0),
+        child:
+        MouseRegion(
+          onEnter: (_) {
+            _actionInput?.value = index + 1;
+          },
+          onExit: (_) {
+            _actionInput?.value = 0;
+          },
+          child:
           GestureDetector(
-            onTapDown: (_) {
-              if (gestureEnabled) {
-                List<List<int>> animationPlaylist = gs.tap(index);
-                print("Click on GestureDetector: " + (index).toString());
-                print(animationPlaylist);
-                gs.printBoard();
-                if(animationPlaylist.length > 0) {
-                  gestureEnabled = false;
-                }
-                for(int i=0;i<animationPlaylist.length;i++) {
-                  
-                    int affectedTileIndex = animationPlaylist[i][0];
-                    _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Hover'));
-                    _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
-                    print("yo" + (_indexes?[i].value).toString());
-                    _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
-                    _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
-                    _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
-
-                    if(gs.findIndexOfTile(affectedTileIndex + 1) == affectedTileIndex) {
-                      _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
-                    } else {
-                      _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
-                    }
-                }
+              onTapDown: (_) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Puzzle(title: 'Flutter Demo Home Page')),
+                );
+              },
+              onTapCancel: () {
+              },
+              onTapUp: (_) {
               }
+            /*
             },
             child:
-            Opacity(
-              opacity: 0.01,
+              Opacity(
+              opacity: 0.3,
               child: Container(
-                height: tileDimension,
-                width: tileDimension,
+                height: screenDimension * 0.09,
+                width: screenDimension * 0.37,
                 color: Colors.pink,
-              )
+              ),
             ),
+            */
           ),
+        ),
       );
     });
 
-    return Stack(children: stackLayers);
-  } 
+    return Stack(children:stackLayers);
+  }
 
-  Widget buildPlayGrid(double gridWidth, double gridHeight){
+  Widget buildMenu(double gridWidth, double gridHeight){
     //Calculate tile dimensions
     double dimensionLimit = min(gridWidth, gridHeight);
-    double tileDimension = dimensionLimit /4;
 
-    return Stack(children: 
+    return Stack(children:
     [
-      buildTileGrid(dimensionLimit), 
-      buildGestureGrid(dimensionLimit, tileDimension),
+      buildMenuGraphics(dimensionLimit),
+      buildMenuGesture(dimensionLimit),
     ]);
   }
 
@@ -269,79 +154,25 @@ class _PuzzleState extends State<Puzzle> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    print("sw:" + screenWidth.toString());
-    print("sh:" + screenHeight.toString());
-
-    Future.delayed(Duration(milliseconds: 1000),() {
-      if(!shuffled) {
-        //some action on complete
-        shuffled = true;
-        List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(100);
-        print(shuffleAnimationPlaylist);
-
-        setState(() {
-          for(int i=0;i<shuffleAnimationPlaylist[0].length;i++) {
-            
-              int affectedTileIndex = shuffleAnimationPlaylist[0][i][0];
-              _indexes?[affectedTileIndex].value = shuffleAnimationPlaylist[0][i][1].toDouble();
-              _rows?[affectedTileIndex].value = shuffleAnimationPlaylist[0][i][2] == 1 ? true : false;
-              _columns?[affectedTileIndex].value = shuffleAnimationPlaylist[0][i][3] == 1 ? true : false;
-              _moves?[affectedTileIndex].value = shuffleAnimationPlaylist[0][i][4] == 1 ? true : false;
-            
-          }
-          
-        });
-      Future.delayed(Duration(milliseconds: 2000),() {
-        setState(() {
-          for(int i=0;i<shuffleAnimationPlaylist[1].length;i++) {
-            
-              int affectedTileIndex = shuffleAnimationPlaylist[1][i][0];
-              _indexes?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][1].toDouble();
-              _rows?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][2] == 1 ? true : false;
-              _columns?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][3] == 1 ? true : false;
-              _moves?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][4] == 1 ? true : false;
-            
-          }
-
-          for(int i=0;i<_riveArtboard!.length;i++) {
-            if(gs.findIndexOfTile(i + 1) == i) {
-              _riveArtboard![i].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
-            } else {
-              _riveArtboard![i].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
-            }
-          }
-        });
-         });
-      }
-    }); 
+    //print("sw:" + screenWidth.toString());
+    //print("sh:" + screenHeight.toString());
 
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
-        title: const Text('Puzzle'),
+        title: const Text('Button State Machine'),
       ),
       body: Center(
         child: _riveArtboard == null
             ? const SizedBox()
-            :  Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Press to activate!',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Expanded(
-                      child: buildPlayGrid(screenWidth, screenHeight),
-                    ),
-                    const SizedBox(height: 10),
-                    Text('$stateChangeMessage'),
-                    const SizedBox(height: 10),
-                    
-                  ],
-                ),
+            : Column(
+          children: [
+            const SizedBox(height:10),
+            Expanded(
+                child: buildMenu(screenWidth, screenHeight)
+            )
+          ],
+        ),
       ),
     );
   }
