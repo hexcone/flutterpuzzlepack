@@ -33,13 +33,13 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const Puzzle(title: 'Flutter Demo Home Page'),
+      home: const Puzzle(lang: 'ar'),
     );
   }
 }
 
 class Puzzle extends StatefulWidget {
-  const Puzzle({Key? key, required this.title}) : super(key: key);
+  const Puzzle({Key? key, required this.lang}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -50,13 +50,14 @@ class Puzzle extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
+  final String lang;
 
   @override
   State<Puzzle> createState() => _PuzzleState();
 }
 
 class _PuzzleState extends State<Puzzle> {
+
   /// Tracks if the animation is playing by whether controller is running.
   bool get isPlaying => _controller?.isActive ?? false;
 
@@ -89,21 +90,21 @@ class _PuzzleState extends State<Puzzle> {
     });
 
     final assets = [
-      'english/Tile_01.riv',
-      'english/Tile_02.riv',
-      'english/Tile_03.riv',
-      'english/Tile_04.riv',
-      'english/Tile_05.riv',
-      'english/Tile_06.riv',
-      'english/Tile_07.riv',
-      'english/Tile_08.riv',
-      'english/Tile_09.riv',
-      'english/Tile_10.riv',
-      'english/Tile_11.riv',
-      'english/Tile_12.riv',
-      'english/Tile_13.riv',
-      'english/Tile_14.riv',
-      'english/Tile_15.riv',
+      '/Tile_01.riv',
+      '/Tile_02.riv',
+      '/Tile_03.riv',
+      '/Tile_04.riv',
+      '/Tile_05.riv',
+      '/Tile_06.riv',
+      '/Tile_07.riv',
+      '/Tile_08.riv',
+      '/Tile_09.riv',
+      '/Tile_10.riv',
+      '/Tile_11.riv',
+      '/Tile_12.riv',
+      '/Tile_13.riv',
+      '/Tile_14.riv',
+      '/Tile_15.riv',
     ];
 
     var controller;
@@ -112,7 +113,7 @@ class _PuzzleState extends State<Puzzle> {
       // Load the animation file from the bundle, note that you could also
       // download this. The RiveFile just expects a list of bytes.
       print("fuck");
-      rootBundle.load(assets[i]).then(
+      rootBundle.load(widget.lang + assets[i]).then(
         (data) {
           // Load the RiveFile from the binary data.
           final file = RiveFile.import(data);
@@ -316,7 +317,7 @@ class _PuzzleState extends State<Puzzle> {
     }); 
 
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Puzzle'),
       ),

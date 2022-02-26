@@ -61,7 +61,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
 
     // Load the animation file from the bundle, note that you could also
     // download this. The RiveFile just expects a list of bytes.
-    rootBundle.load('assets/menu.riv').then(
+    rootBundle.load('menu.riv').then(
           (data) async {
         // Load the RiveFile from the binary data.
         final file = RiveFile.import(data);
@@ -94,7 +94,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     List<Widget> stackLayers = List<Widget>.generate(3, (index) {
       return Padding(
         padding: EdgeInsets.only(left: screenDimension * 0.315,
-            top: index * screenDimension * 0.130 + screenDimension * 0.3,
+            top: index * screenDimension * 0.130 + screenDimension * 0.315,
             bottom: 0,
             right: 0),
         child:
@@ -108,16 +108,32 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
           child:
           GestureDetector(
               onTapDown: (_) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Puzzle(title: 'Flutter Demo Home Page')),
-                );
+                if (index == 0) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Puzzle(lang: 'ar')),
+                  );
+                } else if (index == 1) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Puzzle(lang: 'cn')),
+                  );
+                } else if (index == 2) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Puzzle(lang: 'jp')),
+                  );
+                }
+
               },
               onTapCancel: () {
               },
               onTapUp: (_) {
               }
-            /*
+/*
             },
             child:
               Opacity(
@@ -128,7 +144,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                 color: Colors.pink,
               ),
             ),
-            */
+*/
           ),
         ),
       );
@@ -137,9 +153,9 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     return Stack(children:stackLayers);
   }
 
-  Widget buildMenu(double gridWidth, double gridHeight){
+  Widget buildMenu(double width, double height){
     //Calculate tile dimensions
-    double dimensionLimit = min(gridWidth, gridHeight);
+    double dimensionLimit = min(width, height);
 
     return Stack(children:
     [
@@ -154,11 +170,8 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    //print("sw:" + screenWidth.toString());
-    //print("sh:" + screenHeight.toString());
-
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Button State Machine'),
       ),
@@ -169,8 +182,8 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
           children: [
             const SizedBox(height:10),
             Expanded(
-                child: buildMenu(screenWidth, screenHeight)
-            )
+              child: buildMenu(screenWidth, screenHeight),
+            ),
           ],
         ),
       ),
