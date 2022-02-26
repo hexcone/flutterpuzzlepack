@@ -73,22 +73,22 @@ class _PuzzleState extends State<Puzzle> {
     super.initState();
 
     final assets = [
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
-      'assets/Draft_5_bg_and_border.riv',
+      'assets/english/Tile_01.riv',
+      'assets/english/Tile_02.riv',
+      'assets/english/Tile_03.riv',
+      'assets/english/Tile_04.riv',
+      'assets/english/Tile_05.riv',
+      'assets/english/Tile_06.riv',
+      'assets/english/Tile_07.riv',
+      'assets/english/Tile_08.riv',
+      'assets/english/Tile_09.riv',
+      'assets/english/Tile_10.riv',
+      'assets/english/Tile_11.riv',
+      'assets/english/Tile_12.riv',
+      'assets/english/Tile_13.riv',
+      'assets/english/Tile_14.riv',
+      'assets/english/Tile_15.riv',
+      'assets/english/Tile_15.riv',
     ];
 
     var controller;
@@ -97,7 +97,7 @@ class _PuzzleState extends State<Puzzle> {
       // Load the animation file from the bundle, note that you could also
       // download this. The RiveFile just expects a list of bytes.
       print("fuck");
-      rootBundle.load('assets/Draft_5_bg_and_border.riv').then(
+      rootBundle.load(assets[i]).then(
         (data) async {
           // Load the RiveFile from the binary data.
           final file = RiveFile.import(data);
@@ -163,7 +163,8 @@ class _PuzzleState extends State<Puzzle> {
 
     List<Widget> stackLayers = List<Widget>.generate(items.length, (index) {
       return Padding(
-        padding: EdgeInsets.only(left: index%4 * tileDimension, top: index~/4 * tileDimension, bottom: 0, right: 0),
+        //padding: EdgeInsets.only(left: index%4 * tileDimension, top: index~/4 * tileDimension, bottom: 0, right: 0),
+        padding: EdgeInsets.only(left: 0, top: 0, bottom: 0, right: 0),
         child: 
           Container(
             height: tileDimension,
@@ -223,7 +224,7 @@ class _PuzzleState extends State<Puzzle> {
 
     return Stack(children: 
     [
-      buildTileGrid(tileDimension), 
+      buildTileGrid(dimensionLimit), 
       buildGestureGrid(tileDimension),
     ]);
   }
