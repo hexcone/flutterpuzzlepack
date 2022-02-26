@@ -165,21 +165,21 @@ class _PuzzleState extends State<Puzzle> {
       return SizedBox();
     }
     final items = [
-      Rive(artboard: _riveArtboard![0],),  //tile 1
-      Rive(artboard: _riveArtboard![1],),
-      Rive(artboard: _riveArtboard![2],),
-      Rive(artboard: _riveArtboard![3],),
-      Rive(artboard: _riveArtboard![4],),
-      Rive(artboard: _riveArtboard![5],),
-      Rive(artboard: _riveArtboard![6],),
-      Rive(artboard: _riveArtboard![7],),  //tile 8
+      Rive(artboard: _riveArtboard![12],), 
+      Rive(artboard: _riveArtboard![13],),
+      Rive(artboard: _riveArtboard![14],),
       Rive(artboard: _riveArtboard![8],),
       Rive(artboard: _riveArtboard![9],),
       Rive(artboard: _riveArtboard![10],),
       Rive(artboard: _riveArtboard![11],),
-      Rive(artboard: _riveArtboard![12],),
-      Rive(artboard: _riveArtboard![13],),
-      Rive(artboard: _riveArtboard![14],),
+      Rive(artboard: _riveArtboard![4],), 
+      Rive(artboard: _riveArtboard![5],),
+      Rive(artboard: _riveArtboard![6],),
+      Rive(artboard: _riveArtboard![7],),
+      Rive(artboard: _riveArtboard![0],),
+      Rive(artboard: _riveArtboard![1],),
+      Rive(artboard: _riveArtboard![2],),
+      Rive(artboard: _riveArtboard![3],),
     ];
 
     List<Widget> stackLayers = List<Widget>.generate(items.length, (index) {
