@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'dart:math';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -67,6 +69,8 @@ class _PuzzleState extends State<Puzzle> {
 
   GameState gs = GameState();
 
+  bool gestureEnabled = true;
+
   @override
   void initState() {
     print("wtf");
@@ -133,8 +137,12 @@ class _PuzzleState extends State<Puzzle> {
 
   /// Do something when the state machine changes state
   void _onStateChange(String stateMachineName, String stateName) => setState(
-        () => stateChangeMessage =
-            'State Changed in $stateMachineName to $stateName',
+        () {
+          stateChangeMessage = 'State Changed in $stateMachineName to $stateName';
+          if (stateName == "Reset") {
+            gestureEnabled = true;
+          }
+        },
       );
 
   Widget buildTileGrid(double tileDimension) {
@@ -175,31 +183,33 @@ class _PuzzleState extends State<Puzzle> {
     return Stack(children: stackLayers);
   }
 
-  Widget buildGestureGrid(double tileDimension) { 
+  Widget buildGestureGrid(double screenDimension, double tileDimension) { 
+
+    double tileDimension = screenDimension * 0.62 / 4;
     var rng = Random();
     print("wah" + rng.nextInt(100).toString());
     List<Widget> stackLayers = List<Widget>.generate(16, (index) {
       return Padding(
-        padding: EdgeInsets.only(left: index%4 * tileDimension, top: index~/4 * tileDimension, bottom: 0, right: 0),
+        padding: EdgeInsets.only(left: index%4 * tileDimension + screenDimension * 0.20, top: index~/4 * tileDimension + screenDimension * 0.18, bottom: 0, right: 0),
         child: 
           GestureDetector(
             onTapDown: (_) {
-              List<List<int>> animationPlaylist = gs.tap(index);
-              print("Click on GestureDetector: " + (index).toString());
-              print(animationPlaylist);
-              gs.printBoard();
-              for(int i=0;i<animationPlaylist.length;i++) {
-                
-                  int affectedTileIndex = animationPlaylist[i][0];
-
-                    _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
-                    print("yo" + (_indexes?[i].value).toString());
-                    _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
-                    _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
-                    _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
+              if (gestureEnabled) {
+                List<List<int>> animationPlaylist = gs.tap(index);
+                print("Click on GestureDetector: " + (index).toString());
+                print(animationPlaylist);
+                gs.printBoard();
+                gestureEnabled = false;
+                for(int i=0;i<animationPlaylist.length;i++) {
                   
-                 
+                    int affectedTileIndex = animationPlaylist[i][0];
 
+                      _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
+                      print("yo" + (_indexes?[i].value).toString());
+                      _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
+                      _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
+                      _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
+                }
               }
             },
             child:
@@ -221,12 +231,12 @@ class _PuzzleState extends State<Puzzle> {
   Widget buildPlayGrid(double gridWidth, double gridHeight){
     //Calculate tile dimensions
     double dimensionLimit = min(gridWidth, gridHeight);
-    double tileDimension = dimensionLimit / 4;
+    double tileDimension = dimensionLimit /4;
 
     return Stack(children: 
     [
       buildTileGrid(dimensionLimit), 
-      buildGestureGrid(tileDimension),
+      buildGestureGrid(dimensionLimit, tileDimension),
     ]);
   }
 
