@@ -91,10 +91,10 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
   }
 
   Widget buildMenuGesture(double screenDimension) {
-    List<Widget> stackLayers = List<Widget>.generate(3, (index) {
+    List<Widget> stackLayers = List<Widget>.generate(2, (index) {
       return Padding(
-        padding: EdgeInsets.only(left: screenDimension * 0.315,
-            top: index * screenDimension * 0.130 + screenDimension * 0.315,
+        padding: EdgeInsets.only(left: screenDimension * 0.31,
+            top: index * screenDimension * 0.130 + screenDimension * 0.32,
             bottom: 0,
             right: 0),
         child:
@@ -120,14 +120,16 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                     MaterialPageRoute(
                         builder: (context) => const Puzzle(lang: 'cn')),
                   );
-                } else if (index == 2) {
+                }
+                /*
+                else if (index == 2) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const Puzzle(lang: 'jp')),
                   );
                 }
-
+                */
               },
               onTapCancel: () {
               },
@@ -139,8 +141,8 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
               Opacity(
               opacity: 0.3,
               child: Container(
-                height: screenDimension * 0.09,
-                width: screenDimension * 0.37,
+                height: screenDimension * 0.1,
+                width: screenDimension * 0.38,
                 color: Colors.pink,
               ),
             ),
@@ -172,15 +174,16 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      /*
       appBar: AppBar(
         title: const Text('Button State Machine'),
       ),
+      */
       body: Center(
         child: _riveArtboard == null
             ? const SizedBox()
             : Column(
           children: [
-            const SizedBox(height:10),
             Expanded(
               child: buildMenu(screenWidth, screenHeight),
             ),

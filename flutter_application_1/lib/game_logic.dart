@@ -314,35 +314,25 @@ class _PuzzleState extends State<Puzzle> {
         });
          });
       }
-    }); 
+    });
 
     return Scaffold(
       backgroundColor: Colors.white,
+      /*
       appBar: AppBar(
         title: const Text('Puzzle'),
       ),
+      */
       body: Center(
         child: _riveArtboard == null
             ? const SizedBox()
             :  Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Press to activate!',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Expanded(
-                      child: buildPlayGrid(screenWidth, screenHeight),
-                    ),
-                    const SizedBox(height: 10),
-                    Text('$stateChangeMessage'),
-                    const SizedBox(height: 10),
-                    
-                  ],
-                ),
+          children: [
+            Expanded(
+              child: buildPlayGrid(screenWidth, screenHeight),
+            ),
+          ],
+        ),
       ),
     );
   }
