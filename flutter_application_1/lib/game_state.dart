@@ -33,7 +33,7 @@ class GameState {
         int affectedTileIndex = findIndexOfTile(previousTile);
         int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
-        tmpAnimationList = [...tmpAnimationList, [affectedTileIndex, affectedTileColumn-1, 0, 1, 1]];
+        tmpAnimationList = [...tmpAnimationList, [previousTile - 1 , affectedTileColumn-1, 0, 1, 1]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
         if(currentTile == 16) {
@@ -62,7 +62,7 @@ class GameState {
         int affectedTileIndex = findIndexOfTile(previousTile);
         int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
-        tmpAnimationList = [...tmpAnimationList, [affectedTileIndex, affectedTileColumn+1, 0, 1, 1]];
+        tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileColumn+1, 0, 1, 1]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
         if(currentTile == 16) {
@@ -92,7 +92,7 @@ class GameState {
         int affectedTileIndex = findIndexOfTile(previousTile);
         int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
-        tmpAnimationList = [...tmpAnimationList, [affectedTileIndex, affectedTileRow - 1, 1, 0, 1]];
+        tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileRow - 1, 1, 0, 1]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
         if(currentTile == 16) {
@@ -121,7 +121,7 @@ class GameState {
         int affectedTileIndex = findIndexOfTile(previousTile);
         int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
-        tmpAnimationList = [...tmpAnimationList, [affectedTileIndex, affectedTileRow + 1, 1, 0, 1]];
+        tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileRow + 1, 1, 0, 1]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
         if(currentTile == 16) {

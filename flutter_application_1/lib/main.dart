@@ -88,7 +88,6 @@ class _PuzzleState extends State<Puzzle> {
       'assets/english/Tile_13.riv',
       'assets/english/Tile_14.riv',
       'assets/english/Tile_15.riv',
-      'assets/english/Tile_15.riv',
     ];
 
     var controller;
@@ -158,7 +157,6 @@ class _PuzzleState extends State<Puzzle> {
       Rive(artboard: _riveArtboard![12],),
       Rive(artboard: _riveArtboard![13],),
       Rive(artboard: _riveArtboard![14],),
-      Rive(artboard: _riveArtboard![15],),  //tile 16
     ];
 
     List<Widget> stackLayers = List<Widget>.generate(items.length, (index) {
@@ -193,11 +191,14 @@ class _PuzzleState extends State<Puzzle> {
               for(int i=0;i<animationPlaylist.length;i++) {
                 
                   int affectedTileIndex = animationPlaylist[i][0];
-                  _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
-                  print("yo" + (_indexes?[i].value).toString());
-                  _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
-                  _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
-                  _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
+
+                    _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
+                    print("yo" + (_indexes?[i].value).toString());
+                    _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
+                    _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
+                    _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
+                  
+                 
 
               }
             },
