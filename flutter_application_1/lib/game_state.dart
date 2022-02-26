@@ -9,6 +9,13 @@ class GameState {
     boardArr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
   }
 
+
+  int hover(int gestureDetectorIndex,  {int tileNum = -1}) {
+    //handles tile movement logic
+    int tile = tileNum == -1 ? boardArr[gestureDetectorIndex] : tileNum;
+    return tile;
+  }
+
   List<List<int>> tap(int gestureDetectorIndex,  {int tileNum = -1}) {
     //handles tile movement logic
     int tile = tileNum == -1 ? boardArr[gestureDetectorIndex] : tileNum;

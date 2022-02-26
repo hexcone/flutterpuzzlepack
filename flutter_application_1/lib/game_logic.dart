@@ -207,7 +207,17 @@ class _PuzzleState extends State<Puzzle> {
     List<Widget> stackLayers = List<Widget>.generate(16, (index) {
       return Padding(
         padding: EdgeInsets.only(left: index%4 * tileDimension + screenDimension * 0.20, top: index~/4 * tileDimension + screenDimension * 0.18, bottom: 0, right: 0),
-        child: 
+        child: MouseRegion(
+          onEnter: (_) {
+            // handle hover animation
+            int affectedTileIndex = gs.hover(index);
+            if ((shuffled) && (affectedTileIndex > 0) && (affectedTileIndex < 16)) {
+              _riveArtboard![affectedTileIndex - 1].addController(_controller2 = SimpleAnimation('Hover'));
+            }
+          },
+          onExit: (_) {
+          },
+          child:
           GestureDetector(
             onTapDown: (_) {
               if (gestureEnabled) {
@@ -219,9 +229,7 @@ class _PuzzleState extends State<Puzzle> {
                   gestureEnabled = false;
                 }
                 for(int i=0;i<animationPlaylist.length;i++) {
-                  
                     int affectedTileIndex = animationPlaylist[i][0];
-                    _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Hover'));
                     _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
                     print("yo" + (_indexes?[i].value).toString());
                     _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
@@ -238,7 +246,7 @@ class _PuzzleState extends State<Puzzle> {
             },
             child:
             Opacity(
-              opacity: 0.01,
+              opacity: 0,
               child: Container(
                 height: tileDimension,
                 width: tileDimension,
@@ -246,6 +254,7 @@ class _PuzzleState extends State<Puzzle> {
               )
             ),
           ),
+        ),
       );
     });
 
@@ -276,7 +285,6 @@ class _PuzzleState extends State<Puzzle> {
     Future.delayed(Duration(milliseconds: 1000),() {
       if(!shuffled) {
         //some action on complete
-        shuffled = true;
         List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(100);
         print(shuffleAnimationPlaylist);
 
@@ -313,6 +321,7 @@ class _PuzzleState extends State<Puzzle> {
           }
         });
          });
+        shuffled = true;
       }
     });
 

@@ -134,19 +134,16 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
               onTapCancel: () {
               },
               onTapUp: (_) {
-              }
-/*
             },
             child:
               Opacity(
-              opacity: 0.3,
+              opacity: 0,
               child: Container(
                 height: screenDimension * 0.1,
                 width: screenDimension * 0.38,
                 color: Colors.pink,
               ),
             ),
-*/
           ),
         ),
       );
