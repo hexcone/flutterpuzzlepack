@@ -37,8 +37,8 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const ExampleStateMachine(title: 'Flutter Demo Home Page'),
-      builder: (context, child) => NavManager(child: child!),
+      home: NavManager(child: const ExampleStateMachine(title: 'Flutter Demo Home Page')),
+      //builder: (context, child) => NavManager(child: child!),
       navigatorKey: Get.key,
       initialRoute: "/",
     );

@@ -83,7 +83,7 @@ class _NavState extends State<NavWidget> {
     if(!kIsWeb) {
       globals.audioEnabled = true;
     }
-    _init();
+    _initAudioPlayer();
 
     // handle audio
     rootBundle.load('assets/nav/audio.riv').then(
@@ -112,13 +112,32 @@ class _NavState extends State<NavWidget> {
 
   }
 
-  void _init() async {
+  void _initAudioPlayer() async {
     _audioPlayer = AudioPlayer();
     await _audioPlayer.setAsset("assets/audio/NatureSample.mp3");
     await _audioPlayer.setLoopMode(LoopMode.all);
     if(globals.audioEnabled) {
       _audioPlayer.play();
     }
+  }
+
+  String getCreditsString() {
+    List<String> credits = [];
+    credits.add("Developers");
+    credits.add("--------------------------------------");
+    credits.add("Juliana Seng (Hexcone)");
+    credits.add("Brandon Tan (BrandonTJS)");
+    credits.add("\n");
+    credits.add("Resources");
+    credits.add("--------------------------------------");
+    credits.add("Background Music: AShamaluevMusic - https://www.ashamaluevmusic.com/");
+    credits.add("Tile Sound Effects: \"Extra bonus in a video game\" - https://mixkit.co/");
+
+    String ret = "";
+    for(int i=0;i<credits.length;i++){
+      ret += credits[i] + "\n";
+    }
+    return ret;
   }
 
   @override
@@ -133,13 +152,27 @@ class _NavState extends State<NavWidget> {
             Container(
               width: 64,
               height: 64,
-              child: _riveArtboardLogo== null
-                  ? const SizedBox()
-                  : Container(
-                child: Rive(
-                  fit: BoxFit.contain,
-                  artboard: _riveArtboardLogo!,
-                ),
+              child: 
+              GestureDetector(
+                onTapDown: (_) {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) {
+                      return AlertDialog(
+                        title: Text('Credits'),
+                        content: Text(getCreditsString()),
+                        actions: <Widget>[],
+                      );
+                    });
+                },
+                child: _riveArtboardLogo == null
+                        ? const SizedBox()
+                        : Container(
+                      child: Rive(
+                        fit: BoxFit.contain,
+                        artboard: _riveArtboardLogo!,
+                      ),
+                    ),
               ),
             ),
             _riveArtboardHome == null
