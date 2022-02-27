@@ -3,8 +3,9 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_1/audio_manager.dart';
+import 'package:flutter_application_1/nav_manager.dart';
 import 'package:rive/rive.dart';
+import 'package:get/get.dart';
 
 import 'game_logic.dart';
 
@@ -35,7 +36,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const ExampleStateMachine(title: 'Flutter Demo Home Page'),
-      builder: (context, child) => AudioManager(child: child!),
+      builder: (context, child) => NavManager(child: child!),
+      navigatorKey: Get.key,
+      initialRoute: "/",
     );
   }
 }
