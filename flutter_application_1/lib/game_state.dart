@@ -1,7 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/animation.dart';
-
 class GameState {
   List<int> boardArr = [];
   int startTime = 0, numMoves = 0;

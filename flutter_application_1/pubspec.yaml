@@ -30,7 +30,6 @@ dependencies:
   flutter:
     sdk: flutter
   rive:
-  audioplayers:
   just_audio:
 
 

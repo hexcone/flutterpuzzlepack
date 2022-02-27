@@ -1,13 +1,10 @@
-import 'dart:io';
 import 'dart:math';
 import 'dart:async';
-import 'dart:typed_data';
 
 //import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/exit_popup.dart';
 import 'package:flutter_application_1/game_state.dart';
