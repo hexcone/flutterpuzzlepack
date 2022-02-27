@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/audio_manager.dart';
 import 'package:rive/rive.dart';
 
 import 'game_logic.dart';
@@ -16,6 +18,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -31,6 +35,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const ExampleStateMachine(title: 'Flutter Demo Home Page'),
+      builder: (context, child) => AudioManager(child: child!),
     );
   }
 }
