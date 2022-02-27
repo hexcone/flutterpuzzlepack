@@ -11,6 +11,7 @@ import 'package:flutter_application_1/exit_popup.dart';
 import 'package:flutter_application_1/game_state.dart';
 import 'package:flutter_application_1/loading_screen.dart';
 import 'package:flutter_application_1/globals.dart' as globals;
+import 'package:flutter_application_1/win_screen.dart';
 import 'package:rive/rive.dart';
 
 
@@ -247,6 +248,16 @@ class _PuzzleState extends State<Puzzle> {
                       }
                     }
                 }
+                if(gs.isWinningState()) {
+                  //Player won
+                  //Show loading screen
+                  loading = true;
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                      opaque: false,
+                      pageBuilder: (BuildContext context, _, __) =>
+                          WinScreen()));
+                }
               }
             },
             child:
@@ -301,7 +312,7 @@ class _PuzzleState extends State<Puzzle> {
     Future.delayed(Duration(milliseconds: 1000),() {
       if(!shuffled) {
         //some action on complete
-        List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(100);
+        List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(1);
         print(shuffleAnimationPlaylist);
 
         setState(() {
