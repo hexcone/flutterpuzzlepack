@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/exit_popup.dart';
 import 'package:flutter_application_1/game_state.dart';
 import 'package:flutter_application_1/loading_screen.dart';
 import 'package:rive/rive.dart';
@@ -329,7 +330,7 @@ class _PuzzleState extends State<Puzzle> {
               }
             }
             
-            Timer(Duration(seconds: 1), () => Navigator.pop(context));
+            Timer(Duration(seconds: 1), () { Navigator.pop(context); });
           });
 
           
@@ -338,24 +339,29 @@ class _PuzzleState extends State<Puzzle> {
       }
     });
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      /*
-      appBar: AppBar(
-        title: const Text('Puzzle'),
-      ),
-      */
-      body: Center(
-        child: _riveArtboard == null
-            ? const SizedBox()
-            :  Column(
-          children: [
-            Expanded(
-              child: buildPlayGrid(screenWidth, screenHeight),
-            ),
-          ],
-        ),
-      ),
-    );
+    return WillPopScope(
+            onWillPop: () => showExitPopup(context),
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              /*
+              appBar: AppBar(
+                title: const Text('Puzzle'),
+              ),
+              */
+              body: Center(
+                child: _riveArtboard == null
+                    ? const SizedBox()
+                    :  Column(
+                  children: [
+                    Expanded(
+                      child: buildPlayGrid(screenWidth, screenHeight),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          );
   }
+
+
 }
