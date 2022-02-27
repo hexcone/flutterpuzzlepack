@@ -165,7 +165,7 @@ class _PuzzleState extends State<Puzzle> {
       );
 
   Widget buildTileGrid(double tileDimension) {
-    if (_riveArtboard?.length == 0){
+    if (_riveArtboard?.length != 15){
       return SizedBox();
     }
     final items = [
