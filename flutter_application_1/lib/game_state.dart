@@ -4,9 +4,24 @@ import 'package:flutter/animation.dart';
 
 class GameState {
   List<int> boardArr = [];
+  int startTime = 0, numMoves = 0;
 
   GameState() {
     boardArr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+    startTime = DateTime.now().millisecondsSinceEpoch;
+  }
+
+  String getNumMoves() {
+    return numMoves.toString();
+  }
+
+  String getTimeTakenString() {
+    int timeTaken = DateTime.now().millisecondsSinceEpoch - startTime;
+    Duration duration = Duration(seconds: timeTaken~/1000);
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
   bool isWinningState(){
@@ -26,6 +41,8 @@ class GameState {
 
   List<List<int>> tap(int gestureDetectorIndex,  {int tileNum = -1}) {
     //handles tile movement logic
+    numMoves++;
+
     int tile = tileNum == -1 ? boardArr[gestureDetectorIndex] : tileNum;
 
     //return [[tile-1, 2, 1, 0, 1]];
@@ -193,6 +210,7 @@ class GameState {
         animationListCol.add([i, affectedTileColumn, 0, 1, 1]); 
     }
     printBoard();
+    numMoves = 0; //reset num moves
     return [animationListRow, animationListCol];
   }
 

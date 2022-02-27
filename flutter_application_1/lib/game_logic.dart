@@ -256,7 +256,7 @@ class _PuzzleState extends State<Puzzle> {
                     PageRouteBuilder(
                       opaque: false,
                       pageBuilder: (BuildContext context, _, __) =>
-                          WinScreen()));
+                          WinScreen(gs: gs)));
                 }
               }
             },
