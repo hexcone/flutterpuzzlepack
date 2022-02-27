@@ -68,6 +68,7 @@ class _PuzzleState extends State<Puzzle> {
 
   Artboard? _boardBorder;
   List<Artboard>? _riveArtboard = [];
+  Artboard? _riveArtboardBackground;
   StateMachineController? _controller;
   RiveAnimationController? _controller2;
   List<SMIInput<bool>>? _moves = [], _rows = [], _columns = [];
@@ -91,6 +92,22 @@ class _PuzzleState extends State<Puzzle> {
         final artboard = file.mainArtboard;
         setState(() => _boardBorder = artboard);
       }
+    );
+
+    rootBundle.load('assets/background.riv').then(
+          (data) async {
+        // Load the RiveFile from the binary data.
+        final file = RiveFile.import(data);
+
+        // The artboard is the root of the animation and gets drawn in the
+        // Rive widget.
+        final artboard = file.mainArtboard;
+        var controller = SimpleAnimation('Animation 1');
+        if (controller != null) {
+          artboard.addController(controller);
+        }
+        setState(() => _riveArtboardBackground = artboard);
+      },
     );
 
     final assets = [
@@ -348,17 +365,30 @@ class _PuzzleState extends State<Puzzle> {
                 title: const Text('Puzzle'),
               ),
               */
-              body: Center(
-                child: _riveArtboard == null
-                    ? const SizedBox()
-                    :  Column(
+                body: Stack(
                   children: [
                     Expanded(
-                      child: buildPlayGrid(screenWidth, screenHeight),
+                      child: _riveArtboardBackground == null
+                          ? const SizedBox()
+                          : Container(
+                        child: Rive(
+                          fit: BoxFit.cover,
+                          artboard: _riveArtboardBackground!,
+                        ),
+                      ),
                     ),
+                    Center(
+                      child: _riveArtboard == null
+                          ? const SizedBox()
+                          :  Column(
+                          children: [
+                            Expanded(
+                              child: buildPlayGrid(screenWidth, screenHeight),
+                            )
+                          ]),
+                    )
                   ],
-                ),
-              ),
+                )
             )
           );
   }

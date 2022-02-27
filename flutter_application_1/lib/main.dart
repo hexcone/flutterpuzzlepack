@@ -51,7 +51,8 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
   /// Tracks if the animation is playing by whether controller is running.
   bool get isPlaying => _controller?.isActive ?? false;
 
-  Artboard? _riveArtboard;
+  Artboard? _riveArtboardMenu;
+  Artboard? _riveArtboardBackground;
   StateMachineController? _controller;
   SMIInput<double>? _actionInput;
 
@@ -75,7 +76,23 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
           artboard.addController(controller);
           _actionInput = controller.findInput('action');
         }
-        setState(() => _riveArtboard = artboard);
+        setState(() => _riveArtboardMenu = artboard);
+      },
+    );
+
+    rootBundle.load('assets/background.riv').then(
+          (data) async {
+        // Load the RiveFile from the binary data.
+        final file = RiveFile.import(data);
+
+        // The artboard is the root of the animation and gets drawn in the
+        // Rive widget.
+        final artboard = file.mainArtboard;
+        var controller = SimpleAnimation('Animation 1');
+        if (controller != null) {
+          artboard.addController(controller);
+        }
+        setState(() => _riveArtboardBackground = artboard);
       },
     );
   }
@@ -85,7 +102,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
         height: dimension,
         width: dimension,
         child: Rive(
-          artboard: _riveArtboard!,
+          artboard: _riveArtboardMenu!,
         )
     );
   }
@@ -107,21 +124,21 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
           },
           child:
           GestureDetector(
-              onTapDown: (_) {
-                if (index == 0) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Puzzle(lang: 'ar')),
-                  );
-                } else if (index == 1) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Puzzle(lang: 'cn')),
-                  );
-                }
-                /*
+            onTapDown: (_) {
+              if (index == 0) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Puzzle(lang: 'ar')),
+                );
+              } else if (index == 1) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Puzzle(lang: 'cn')),
+                );
+              }
+              /*
                 else if (index == 2) {
                   Navigator.push(
                     context,
@@ -130,13 +147,13 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                   );
                 }
                 */
-              },
-              onTapCancel: () {
-              },
-              onTapUp: (_) {
+            },
+            onTapCancel: () {
+            },
+            onTapUp: (_) {
             },
             child:
-              Opacity(
+            Opacity(
               opacity: 0,
               child: Container(
                 height: screenDimension * 0.1,
@@ -170,23 +187,38 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      /*
+        backgroundColor: Colors.white,
+        /*
       appBar: AppBar(
         title: const Text('Button State Machine'),
       ),
       */
-      body: Center(
-        child: _riveArtboard == null
-            ? const SizedBox()
-            : Column(
+        body: Stack(
           children: [
             Expanded(
-              child: buildMenu(screenWidth, screenHeight),
+              child: _riveArtboardBackground == null
+                  ? const SizedBox()
+                  : Container(
+                child: Rive(
+                  fit: BoxFit.cover,
+                  artboard: _riveArtboardBackground!,
+                ),
+              ),
+            ),
+            Center(
+              child: _riveArtboardMenu == null
+                  ? const SizedBox()
+                  : Column(
+                children: [
+                  Expanded(
+                    child: buildMenu(screenWidth, screenHeight),
+                  ),
+                ],
+              ),
             ),
           ],
-        ),
-      ),
+        )
+
     );
   }
 }
