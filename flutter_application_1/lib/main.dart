@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_application_1/nav_manager.dart';
 import 'package:rive/rive.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'game_logic.dart';
 
@@ -211,12 +212,27 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
             _riveArtboardBackground == null
                   ? const SizedBox()
                   : Container(
-                child: Rive(
-                  fit: BoxFit.cover,
-                  artboard: _riveArtboardBackground!,
-                ),
+              child: Rive(
+                fit: BoxFit.cover,
+                artboard: _riveArtboardBackground!,
               ),
-            
+            ),
+            Row /*or Column*/(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container (
+                  width: min(screenWidth, screenHeight) * 0.6,
+                  padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.1),
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      'Count to 15 in another language!',
+                      style: GoogleFonts.pacifico(),
+                    ),
+                  )
+                )
+              ],
+            ),
             Center(
               child: _riveArtboardMenu == null
                   ? const SizedBox()
