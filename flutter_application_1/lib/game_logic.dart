@@ -219,6 +219,7 @@ class _PuzzleState extends State<Puzzle> {
             onTapDown: (_) {
               if (gestureEnabled) {
                 if(globals.audioEnabled) {
+                  soundEffectPlayer.seek(Duration.zero);
                   soundEffectPlayer.play();
                 }
                 List<List<int>> animationPlaylist = gs.tap(index);
