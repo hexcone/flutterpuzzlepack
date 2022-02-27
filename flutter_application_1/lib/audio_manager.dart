@@ -37,7 +37,8 @@ class _AudioPlayerState extends State<AudioPlayerWidget> {
     print("play bg music");
     advancedPlayer = AudioPlayer();
     player = AudioCache(fixedPlayer: advancedPlayer);
-    player!.loop("audio/NatureSample.mp3").then((value) => value.setVolume(DEFAULT_VOLUME)); //https://www.ashamaluevmusic.com/ambient-music
+    player!.loop("audio/NatureSample.mp3"); //https://www.ashamaluevmusic.com/ambient-music
+    advancedPlayer!.setVolume(DEFAULT_VOLUME);
   }
 
   Widget buildAudioButton() {
