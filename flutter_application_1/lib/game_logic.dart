@@ -112,8 +112,7 @@ class _PuzzleState extends State<Puzzle> {
     for(int i = 0; i < assets.length; i++) {
       // Load the animation file from the bundle, note that you could also
       // download this. The RiveFile just expects a list of bytes.
-      print("fuck");
-      rootBundle.load(widget.lang + assets[i]).then(
+      rootBundle.load("assets/" + widget.lang + assets[i]).then(
         (data) {
           // Load the RiveFile from the binary data.
           final file = RiveFile.import(data);
