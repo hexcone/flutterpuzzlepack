@@ -62,12 +62,12 @@ class _PuzzleState extends State<Puzzle> {
   void initState() {
     super.initState();
 
-    soundEffectPlayer.setAsset("audio/ClickSample.wav");
+    soundEffectPlayer.setAsset("assets/audio/ClickSample.wav");
     
     const boardBorderAsset = "assets/Border.riv";
 
     rootBundle.load(boardBorderAsset).then(
-      (data) {
+      (data) async{
         final file = RiveFile.import(data);
         final artboard = file.mainArtboard;
         setState(() => _boardBorder = artboard);

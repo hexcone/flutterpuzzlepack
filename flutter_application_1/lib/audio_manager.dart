@@ -84,7 +84,7 @@ class _AudioPlayerState extends State<AudioPlayerWidget> {
 
   void _init() async {
     _audioPlayer = AudioPlayer();
-    await _audioPlayer.setAsset("audio/NatureSample.mp3");
+    await _audioPlayer.setAsset("assets/audio/NatureSample.mp3");
     if(globals.audioEnabled) {
       _audioPlayer.play();
     }
