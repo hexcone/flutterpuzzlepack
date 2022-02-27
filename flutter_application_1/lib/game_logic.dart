@@ -64,7 +64,7 @@ class _PuzzleState extends State<Puzzle> {
 
     soundEffectPlayer.setAsset("assets/audio/ClickSample.wav");
     
-    const boardBorderAsset = "assets/Border.riv";
+    const boardBorderAsset = "assets/border.riv";
 
     rootBundle.load(boardBorderAsset).then(
       (data) async{
