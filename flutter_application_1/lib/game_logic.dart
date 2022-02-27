@@ -317,7 +317,9 @@ class _PuzzleState extends State<Puzzle> {
               if(gs.findIndexOfTile(i + 1) == i) {
                 _riveArtboard![i].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
               } else {
-                _riveArtboard![i].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
+                if(shuffleAnimationPlaylist[1][i][5] == 1) {
+                  _riveArtboard![i].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
+                }
               }
             }
           });
