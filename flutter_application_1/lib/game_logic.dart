@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,7 @@ class _PuzzleState extends State<Puzzle> {
   GameState gs = GameState();
 
   AudioCache soundEffectPlayer = AudioCache();
-  String soundEffectAsset = "audio/ClickSample.wav";
+  Uint8List ?soundEffectBytes;
 
   bool gestureEnabled = true;
   bool shuffled = false;
@@ -59,6 +60,13 @@ class _PuzzleState extends State<Puzzle> {
   @override
   void initState() {
     super.initState();
+
+    const soundEffectAsset = "assets/audio/ClickSample.wav";
+    rootBundle.load(soundEffectAsset).then((bytes) {
+      Uint8List soundBytes = bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+      soundEffectBytes = soundBytes;
+    });
+    
 
     const boardBorderAsset = "assets/Border.riv";
 
@@ -215,7 +223,7 @@ class _PuzzleState extends State<Puzzle> {
             onTapDown: (_) {
               if (gestureEnabled) {
                 if(globals.audioEnabled) {
-                  soundEffectPlayer.play(soundEffectAsset);
+                  soundEffectPlayer.playBytes(soundEffectBytes!);
                 }
                 List<List<int>> animationPlaylist = gs.tap(index);
                 print("Click on GestureDetector: " + (index).toString());
