@@ -64,6 +64,7 @@ class _PuzzleState extends State<Puzzle> {
   /// Message that displays when state has changed
   String stateChangeMessage = '';
 
+  Artboard? _boardBorder;
   List<Artboard>? _riveArtboard = [];
   StateMachineController? _controller;
   RiveAnimationController? _controller2;
@@ -77,17 +78,17 @@ class _PuzzleState extends State<Puzzle> {
 
   @override
   void initState() {
-    print("wtf");
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      print("WidgetsBinding");
-    });
+    final boardBorderAsset = "assets/Border.riv";
 
-    SchedulerBinding.instance?.addPostFrameCallback((_) {
-      print("SchedulerBinding");
-      
-    });
+    rootBundle.load(boardBorderAsset).then(
+      (data) {
+        final file = RiveFile.import(data);
+        final artboard = file.mainArtboard;
+        setState(() => _boardBorder = artboard);
+      }
+    );
 
     final assets = [
       '/Tile_01.riv',
@@ -165,6 +166,7 @@ class _PuzzleState extends State<Puzzle> {
       return SizedBox();
     }
     final items = [
+      Rive(artboard: _boardBorder!,), 
       Rive(artboard: _riveArtboard![12],), 
       Rive(artboard: _riveArtboard![13],),
       Rive(artboard: _riveArtboard![14],),
