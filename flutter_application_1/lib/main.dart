@@ -144,13 +144,13 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const Puzzle(lang: 'ar')),
+                      builder: (context) => NavManager(child: const Puzzle(lang: 'ar'))),
                 );
               } else if (index == 1) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const Puzzle(lang: 'cn')),
+                      builder: (context) => NavManager(child:const Puzzle(lang: 'cn'))),
                 );
               }
               /*
