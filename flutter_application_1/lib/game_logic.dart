@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 //import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -182,10 +183,12 @@ class _PuzzleState extends State<Puzzle> {
       Rive(artboard: _riveArtboard![3],),
     ];
 
+    int extraTopPadding = !kIsWeb ? 100 : 0;
+
     List<Widget> stackLayers = List<Widget>.generate(items.length, (index) {
       return Padding(
         //padding: EdgeInsets.only(left: index%4 * tileDimension, top: index~/4 * tileDimension, bottom: 0, right: 0),
-        padding: EdgeInsets.only(left: 0, top: 0, bottom: 0, right: 0),
+        padding: EdgeInsets.only(left: 0, top: 0 + extraTopPadding.toDouble(), bottom: 0, right: 0),
         child: 
           Container(
             height: tileDimension,
@@ -201,9 +204,10 @@ class _PuzzleState extends State<Puzzle> {
   Widget buildGestureGrid(double screenDimension, double tileDimension) { 
 
     double tileDimension = screenDimension * 0.62 / 4;
+    int extraTopPadding = !kIsWeb ? 100 : 0;
     List<Widget> stackLayers = List<Widget>.generate(16, (index) {
       return Padding(
-        padding: EdgeInsets.only(left: index%4 * tileDimension + screenDimension * 0.20, top: index~/4 * tileDimension + screenDimension * 0.18, bottom: 0, right: 0),
+        padding: EdgeInsets.only(left: index%4 * tileDimension + screenDimension * 0.20, top: index~/4 * tileDimension + screenDimension * 0.18 + extraTopPadding, bottom: 0, right: 0),
         child: MouseRegion(
           onEnter: (_) {
             // handle hover animation

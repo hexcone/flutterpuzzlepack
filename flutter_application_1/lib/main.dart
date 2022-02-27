@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/nav_manager.dart';
@@ -106,20 +108,25 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
   }
 
   Widget buildMenuGraphics(double dimension) {
-    return Container(
-        height: dimension,
-        width: dimension,
-        child: Rive(
-          artboard: _riveArtboardMenu!,
+    int extraTopPadding = !kIsWeb ? 100 : 0;
+    return Padding(
+        padding: EdgeInsets.only(left: 0, top: 0 + extraTopPadding.toDouble(), bottom: 0, right: 0),
+        child: Container(
+                  height: dimension,
+                  width: dimension,
+                  child: Rive(
+                    artboard: _riveArtboardMenu!,
+                  )
         )
     );
   }
 
   Widget buildMenuGesture(double screenDimension) {
+    int extraTopPadding = !kIsWeb ? 100 : 0;
     List<Widget> stackLayers = List<Widget>.generate(2, (index) {
       return Padding(
         padding: EdgeInsets.only(left: screenDimension * 0.31,
-            top: index * screenDimension * 0.130 + screenDimension * 0.32,
+            top: index * screenDimension * 0.130 + screenDimension * 0.32 + extraTopPadding,
             bottom: 0,
             right: 0),
         child:
