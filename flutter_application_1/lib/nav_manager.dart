@@ -48,7 +48,7 @@ class _NavState extends State<NavWidget> {
     super.initState();
 
     // logo
-    rootBundle.load('nav/logo.riv').then(
+    rootBundle.load('assets/nav/logo.riv').then(
           (data) async {
         // Load the RiveFile from the binary data.
         final file = RiveFile.import(data);
@@ -65,7 +65,7 @@ class _NavState extends State<NavWidget> {
     );
 
     // home
-    rootBundle.load('nav/home.riv').then(
+    rootBundle.load('assets/nav/home.riv').then(
           (data) async {
         // Load the RiveFile from the binary data.
         final file = RiveFile.import(data);
@@ -86,7 +86,7 @@ class _NavState extends State<NavWidget> {
     _init();
 
     // handle audio
-    rootBundle.load('nav/audio.riv').then(
+    rootBundle.load('assets/nav/audio.riv').then(
           (data) async {
         // Load the RiveFile from the binary data.
         final file = RiveFile.import(data);
