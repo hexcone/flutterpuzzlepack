@@ -3,7 +3,8 @@ import 'dart:math';
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:audioplayers/audioplayers.dart';
+//import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -51,8 +52,7 @@ class _PuzzleState extends State<Puzzle> {
 
   GameState gs = GameState();
 
-  AudioCache soundEffectPlayer = AudioCache();
-  Uint8List ?soundEffectBytes;
+  AudioPlayer soundEffectPlayer = AudioPlayer();
 
   bool gestureEnabled = true;
   bool shuffled = false;
@@ -62,13 +62,8 @@ class _PuzzleState extends State<Puzzle> {
   void initState() {
     super.initState();
 
-    const soundEffectAsset = "assets/audio/ClickSample.wav"; //https://mixkit.co/free-sound-effects/game/
-    rootBundle.load(soundEffectAsset).then((bytes) {
-      Uint8List soundBytes = bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
-      soundEffectBytes = soundBytes;
-    });
+    soundEffectPlayer.setAsset("audio/ClickSample.wav");
     
-
     const boardBorderAsset = "assets/Border.riv";
 
     rootBundle.load(boardBorderAsset).then(
@@ -119,7 +114,7 @@ class _PuzzleState extends State<Puzzle> {
       // Load the animation file from the bundle, note that you could also
       // download this. The RiveFile just expects a list of bytes.
       rootBundle.load("assets/" + widget.lang + assets[i]).then(
-        (data) {
+        (data) async {
           // Load the RiveFile from the binary data.
           final file = RiveFile.import(data);
 
@@ -224,7 +219,7 @@ class _PuzzleState extends State<Puzzle> {
             onTapDown: (_) {
               if (gestureEnabled) {
                 if(globals.audioEnabled) {
-                  soundEffectPlayer.playBytes(soundEffectBytes!);
+                  soundEffectPlayer.play();
                 }
                 List<List<int>> animationPlaylist = gs.tap(index);
                 print("Click on GestureDetector: " + (index).toString());
