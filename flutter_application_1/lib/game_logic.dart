@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/game_state.dart';
+import 'package:flutter_application_1/loading_screen.dart';
 import 'package:rive/rive.dart';
 
 
@@ -75,12 +76,13 @@ class _PuzzleState extends State<Puzzle> {
 
   bool gestureEnabled = true;
   bool shuffled = false;
+  bool loading = false;
 
   @override
   void initState() {
     super.initState();
 
-    final boardBorderAsset = "assets/Border.riv";
+    const boardBorderAsset = "assets/Border.riv";
 
     rootBundle.load(boardBorderAsset).then(
       (data) {
@@ -139,9 +141,7 @@ class _PuzzleState extends State<Puzzle> {
                 _indexes?.add(controller.inputs[k]);
               }
             }
-            print("biibi" + (_indexes?.length).toString());
           }
-          print("dump");
           setState(() => _riveArtboard = [..._riveArtboard!, artboard]);
         },
       );
@@ -203,8 +203,6 @@ class _PuzzleState extends State<Puzzle> {
   Widget buildGestureGrid(double screenDimension, double tileDimension) { 
 
     double tileDimension = screenDimension * 0.62 / 4;
-    var rng = Random();
-    print("wah" + rng.nextInt(100).toString());
     List<Widget> stackLayers = List<Widget>.generate(16, (index) {
       return Padding(
         padding: EdgeInsets.only(left: index%4 * tileDimension + screenDimension * 0.20, top: index~/4 * tileDimension + screenDimension * 0.18, bottom: 0, right: 0),
@@ -232,7 +230,6 @@ class _PuzzleState extends State<Puzzle> {
                 for(int i=0;i<animationPlaylist.length;i++) {
                     int affectedTileIndex = animationPlaylist[i][0];
                     _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
-                    print("yo" + (_indexes?[i].value).toString());
                     _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
                     _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
                     _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
@@ -285,6 +282,17 @@ class _PuzzleState extends State<Puzzle> {
     print("sw:" + screenWidth.toString());
     print("sh:" + screenHeight.toString());
 
+    Future.delayed(Duration.zero, () {
+      if(!loading) {
+        //Show loading screen
+        loading = true;
+        Navigator.of(context).push(PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) =>
+            LoadingScreen()));
+      }
+    });
+
     Future.delayed(Duration(milliseconds: 1000),() {
       if(!shuffled) {
         //some action on complete
@@ -318,13 +326,13 @@ class _PuzzleState extends State<Puzzle> {
             for(int i=0;i<_riveArtboard!.length;i++) {
               if(gs.findIndexOfTile(i + 1) == i) {
                 _riveArtboard![i].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
-              } else {
-                if(shuffleAnimationPlaylist[1][i][5] == 1) {
-                  _riveArtboard![i].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
-                }
               }
             }
+            
+            Timer(Duration(seconds: 1), () => Navigator.pop(context));
           });
+
+          
          });
         shuffled = true;
       }
