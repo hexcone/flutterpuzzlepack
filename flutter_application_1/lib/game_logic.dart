@@ -346,8 +346,7 @@ class _PuzzleState extends State<Puzzle> {
               */
                 body: Stack(
                   children: [
-                    Expanded(
-                      child: _riveArtboardBackground == null
+                    _riveArtboardBackground == null
                           ? const SizedBox()
                           : Container(
                         child: Rive(
@@ -355,7 +354,6 @@ class _PuzzleState extends State<Puzzle> {
                           artboard: _riveArtboardBackground!,
                         ),
                       ),
-                    ),
                     Center(
                       child: _riveArtboard == null
                           ? const SizedBox()

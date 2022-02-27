@@ -200,8 +200,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
       */
         body: Stack(
           children: [
-            Expanded(
-              child: _riveArtboardBackground == null
+            _riveArtboardBackground == null
                   ? const SizedBox()
                   : Container(
                 child: Rive(
@@ -209,7 +208,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                   artboard: _riveArtboardBackground!,
                 ),
               ),
-            ),
+            
             Center(
               child: _riveArtboardMenu == null
                   ? const SizedBox()
