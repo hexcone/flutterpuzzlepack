@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: NavManager(child: const ExampleStateMachine(title: 'Flutter Demo Home Page')),
-      //builder: (context, child) => NavManager(child: child!),
+      home: const ExampleStateMachine(title: 'Flutter Demo Home Page'),
+      builder: (context, child) => NavManager(child: child!),
       navigatorKey: Get.key,
       initialRoute: "/",
     );
@@ -142,13 +142,13 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => NavManager(child: const Puzzle(lang: 'ar'))),
+                      builder: (context) => const Puzzle(lang: 'ar')),
                 );
               } else if (index == 1) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => NavManager(child:const Puzzle(lang: 'cn'))),
+                      builder: (context) => const Puzzle(lang: 'cn')),
                 );
               }
               /*

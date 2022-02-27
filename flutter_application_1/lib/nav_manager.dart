@@ -152,15 +152,14 @@ class _NavState extends State<NavWidget> {
               child: 
               GestureDetector(
                 onTapDown: (_) {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) {
-                      return AlertDialog(
-                        title: Text('Credits'),
-                        content: Text(getCreditsString()),
-                        actions: <Widget>[],
-                      );
-                    });
+                  Get.defaultDialog(
+                    title: "Credits",
+                    middleText: getCreditsString(),
+                    //backgroundColor: Colors.green,
+                    //titleStyle: TextStyle(color: Colors.white),
+                    //middleTextStyle: TextStyle(color: Colors.white),
+
+                  );
                 },
                 child: _riveArtboardLogo == null
                         ? const SizedBox()
