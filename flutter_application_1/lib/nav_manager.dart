@@ -115,11 +115,12 @@ class _NavState extends State<NavWidget> {
   void _init() async {
     _audioPlayer = AudioPlayer();
     await _audioPlayer.setAsset("assets/audio/NatureSample.mp3");
+    await _audioPlayer.setLoopMode(LoopMode.all);
     if(globals.audioEnabled) {
       _audioPlayer.play();
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     var controller;
