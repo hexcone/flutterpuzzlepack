@@ -217,7 +217,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                 artboard: _riveArtboardBackground!,
               ),
             ),
-            Row /*or Column*/(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container (

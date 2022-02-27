@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/game_state.dart';
 import 'package:rive/rive.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WinScreen extends StatefulWidget {
   const WinScreen({Key? key, required this.gs}) : super(key: key);
@@ -42,6 +45,7 @@ class _WinScreenState extends State<WinScreen> {
   }
 
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
     return 
@@ -78,9 +82,24 @@ class _WinScreenState extends State<WinScreen> {
                                       ),
                                     ),
                                   ),
-                                Text.rich(TextSpan(text: 'You Won!', style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255), fontSize: 50))),
-                                Text.rich(TextSpan(text: 'Time Taken: ' + gs!.getTimeTakenString(), style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)))),
-                                Text.rich(TextSpan(text: 'Number of Moves: ' + gs!.getNumMoves(), style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 255, 255)))),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container (
+                                        width: min(screenWidth, screenHeight) * 0.6,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Text(
+                                            'You Won!\n' +
+                                            'Time Taken: ' + gs!.getTimeTakenString() + '\n'
+                                            'Number of Moves: ' + gs!.getNumMoves(),
+                                            style: GoogleFonts.pacifico(),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        )
+                                    )
+                                  ],
+                                ),
                               ],
                             ),
                           )
