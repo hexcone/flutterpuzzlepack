@@ -93,7 +93,7 @@ class _WinScreenState extends State<WinScreen> {
                                             'You Won!\n' +
                                             'Time Taken: ' + gs!.getTimeTakenString() + '\n'
                                             'Number of Moves: ' + gs!.getNumMoves(),
-                                            style: GoogleFonts.pacifico(),
+                                            style: GoogleFonts.pacifico(color: Colors.white),
                                             textAlign: TextAlign.center,
                                           ),
                                         )
