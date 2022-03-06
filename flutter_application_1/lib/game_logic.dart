@@ -60,6 +60,7 @@ class _PuzzleState extends State<Puzzle> {
   bool isDarkMode = globals.darkModeEnabled;
   SMIInput<double>? _darkModeInput;
   Timer? _timer;
+  double _start = -100;
 
   @override
   void initState() {
@@ -223,6 +224,35 @@ class _PuzzleState extends State<Puzzle> {
     return Stack(children: stackLayers);
   }
 
+  Widget buildAnimationLayer(double screenWidth, double screenHeight) {
+    var rng = Random();
+
+    Future.delayed(Duration(milliseconds: 1000),() {
+      setState(() {
+        _start = screenWidth;
+      });
+    });
+
+    return 
+    Directionality(
+      textDirection: TextDirection.ltr,
+      child: AnimatedPositionedDirectional(
+        top: rng.nextDouble() * screenHeight,
+        start: _start,
+        width: 100,
+        height: 200,
+        duration: Duration(milliseconds: 2000),
+        // Perform the end callback
+        onEnd: () {},
+        curve: Curves.slowMiddle,
+        child: Container(
+          color: Colors.blue,
+          child: Text("Early riser")
+        )
+      )
+    );
+  }
+
   Widget buildGestureGrid(double screenDimension, double tileDimension) { 
 
     double tileDimension = screenDimension * 0.62 / 4;
@@ -320,8 +350,6 @@ class _PuzzleState extends State<Puzzle> {
   @override
   Widget build(BuildContext context) {
 
-    
-
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -406,13 +434,15 @@ class _PuzzleState extends State<Puzzle> {
                     Center(
                       child: _riveArtboard == null
                           ? const SizedBox()
-                          :  Column(
-                          children: [
-                            Expanded(
-                              child: buildPlayGrid(screenWidth, screenHeight),
-                            )
-                          ]),
-                    )
+                          : Column(
+                              children: [
+                                Expanded(
+                                  child: buildPlayGrid(screenWidth, screenHeight),
+                                )
+                              ],
+                            ),
+                    ),
+                    buildAnimationLayer(screenWidth, screenHeight)
                   ],
                 )
             )
