@@ -2,15 +2,43 @@ import 'dart:math';
 
 class GameState {
   List<int> boardArr = [];
+  List<int> zIndex = [];
   int startTime = 0, numMoves = 0;
 
   GameState() {
     boardArr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+    zIndex = [
+      40, // 1
+      50,
+      60,
+      70,
+      30, // 5
+      40,
+      50,
+      60,
+      20, // 9
+      30,
+      40,
+      50,
+      10, // 13
+      20,
+      30,
+      40,
+      //100
+    ];
     startTime = DateTime.now().millisecondsSinceEpoch;
   }
 
   String getNumMoves() {
     return numMoves.toString();
+  }
+
+  List<int> getZIndex() {
+    return zIndex;
+  }
+
+  void incZIndex(int index, int value) {
+    zIndex[index] += value;
   }
 
   String getTimeTakenString() {
@@ -37,7 +65,7 @@ class GameState {
     return tile;
   }
 
-  List<List<int>> tap(int gestureDetectorIndex,  {int tileNum = -1}) {
+  List<List<int>> tap(int gestureDetectorIndex, {int tileNum = -1}) {
     //handles tile movement logic
     numMoves++;
 
@@ -66,7 +94,7 @@ class GameState {
         int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
         bool isCurrentlyInCorrectPos = boardArr[affectedTileIndex] == (affectedTileIndex + 1);
-        tmpAnimationList = [...tmpAnimationList, [previousTile - 1 , affectedTileColumn-1, 0, 1, 1, isCurrentlyInCorrectPos ? 1 : 0]];
+        tmpAnimationList = [...tmpAnimationList, [previousTile - 1 , affectedTileColumn-1, 0, 1, 1, isCurrentlyInCorrectPos ? 1 : 0, 0]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
         if(currentTile == 16) {
@@ -96,7 +124,7 @@ class GameState {
         int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
         bool isCurrentlyInCorrectPos = boardArr[affectedTileIndex] == (affectedTileIndex + 1);
-        tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileColumn+1, 0, 1, 1, isCurrentlyInCorrectPos ? 1 : 0]];
+        tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileColumn+1, 0, 1, 1, isCurrentlyInCorrectPos ? 1 : 0, 1]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
         if(currentTile == 16) {
@@ -127,7 +155,7 @@ class GameState {
         int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
         bool isCurrentlyInCorrectPos = boardArr[affectedTileIndex] == (affectedTileIndex + 1);
-        tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileRow - 1, 1, 0, 1, isCurrentlyInCorrectPos ? 1 : 0]];
+        tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileRow - 1, 1, 0, 1, isCurrentlyInCorrectPos ? 1 : 0, 1]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
         if(currentTile == 16) {
@@ -157,7 +185,7 @@ class GameState {
         int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
         bool isCurrentlyInCorrectPos = boardArr[affectedTileIndex] == (affectedTileIndex + 1);
-        tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileRow + 1, 1, 0, 1, isCurrentlyInCorrectPos ? 1 : 0]];
+        tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileRow + 1, 1, 0, 1, isCurrentlyInCorrectPos ? 1 : 0, 0]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
         if(currentTile == 16) {
@@ -196,7 +224,14 @@ class GameState {
         if(randomTileNum == -1) {
             continue;
         }
-        tap(-1, tileNum: randomTileNum); 
+
+        List<List<int>> animationPlaylist = tap(-1, tileNum: randomTileNum);
+        for(int i=0;i<animationPlaylist.length;i++) {
+          int value = 0;
+          (animationPlaylist[i][6] == 1) ? value = 10 : value = -10;
+          zIndex[animationPlaylist[i][0]] += value;
+        }
+
         break;
       }
     }

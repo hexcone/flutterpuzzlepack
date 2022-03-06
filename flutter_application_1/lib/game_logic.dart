@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:async';
 
-//import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_application_1/storage_manager.dart';
 import 'package:just_audio/just_audio.dart';
@@ -13,7 +12,7 @@ import 'package:flutter_application_1/loading_screen.dart';
 import 'package:flutter_application_1/globals.dart' as globals;
 import 'package:flutter_application_1/win_screen.dart';
 import 'package:rive/rive.dart';
-
+import 'package:indexed/indexed.dart';
 
 class Puzzle extends StatefulWidget {
   const Puzzle({Key? key, required this.lang}) : super(key: key);
@@ -48,6 +47,8 @@ class _PuzzleState extends State<Puzzle> {
   RiveAnimationController? _controller2;
   List<SMIInput<bool>>? _moves = [], _rows = [], _columns = [];
   List<SMIInput<double>>? _indexes = [];
+
+  List<Widget> stackLayers = [];
 
   GameState gs = GameState();
 
@@ -188,40 +189,52 @@ class _PuzzleState extends State<Puzzle> {
       return SizedBox();
     }
     final items = [
-      Rive(artboard: _boardBorder!,), 
-      Rive(artboard: _riveArtboard![12],), 
-      Rive(artboard: _riveArtboard![13],),
-      Rive(artboard: _riveArtboard![14],),
-      Rive(artboard: _riveArtboard![8],),
-      Rive(artboard: _riveArtboard![9],),
-      Rive(artboard: _riveArtboard![10],),
-      Rive(artboard: _riveArtboard![11],),
-      Rive(artboard: _riveArtboard![4],), 
-      Rive(artboard: _riveArtboard![5],),
-      Rive(artboard: _riveArtboard![6],),
-      Rive(artboard: _riveArtboard![7],),
       Rive(artboard: _riveArtboard![0],),
       Rive(artboard: _riveArtboard![1],),
       Rive(artboard: _riveArtboard![2],),
       Rive(artboard: _riveArtboard![3],),
+      Rive(artboard: _riveArtboard![4],),
+      Rive(artboard: _riveArtboard![5],),
+      Rive(artboard: _riveArtboard![6],),
+      Rive(artboard: _riveArtboard![7],),
+      Rive(artboard: _riveArtboard![8],),
+      Rive(artboard: _riveArtboard![9],),
+      Rive(artboard: _riveArtboard![10],),
+      Rive(artboard: _riveArtboard![11],),
+      Rive(artboard: _riveArtboard![12],),
+      Rive(artboard: _riveArtboard![13],),
+      Rive(artboard: _riveArtboard![14],),
+      Rive(artboard: _boardBorder!,),
     ];
 
     int extraTopPadding = !kIsWeb ? 100 : 0;
 
-    List<Widget> stackLayers = List<Widget>.generate(items.length, (index) {
-      return Padding(
-        //padding: EdgeInsets.only(left: index%4 * tileDimension, top: index~/4 * tileDimension, bottom: 0, right: 0),
-        padding: EdgeInsets.only(left: 0, top: 0 + extraTopPadding.toDouble(), bottom: 0, right: 0),
-        child: 
-          Container(
+    stackLayers = List<Widget>.generate(items.length - 1, (index) {
+      return Indexed(
+        key: Key(index.toString()),
+        index: gs.getZIndex()[index],
+        child: Padding(
+          padding: EdgeInsets.only(left: 0, top: 0 + extraTopPadding.toDouble(), bottom: 0, right: 0),
+          child: Container(
             height: tileDimension,
             width: tileDimension,
             child: items[index]
           ),
+        ),
       );
     });
 
-    return Stack(children: stackLayers);
+    return Stack(children: [
+      Indexer(children: stackLayers),
+      Padding(
+        padding: EdgeInsets.only(left: 0, top: 0 + extraTopPadding.toDouble(), bottom: 0, right: 0),
+        child: Container(
+            height: tileDimension,
+            width: tileDimension,
+            child: items[15]
+        ),
+      ),
+    ]);
   }
 
   Widget buildAnimationLayer(double screenWidth, double screenHeight) {
@@ -257,7 +270,7 @@ class _PuzzleState extends State<Puzzle> {
 
     double tileDimension = screenDimension * 0.62 / 4;
     int extraTopPadding = !kIsWeb ? 100 : 0;
-    List<Widget> stackLayers = List<Widget>.generate(16, (index) {
+    List<Widget> gestureStackLayers = List<Widget>.generate(16, (index) {
       return Padding(
         padding: EdgeInsets.only(left: index%4 * tileDimension + screenDimension * 0.20, top: index~/4 * tileDimension + screenDimension * 0.18 + extraTopPadding, bottom: 0, right: 0),
         child: MouseRegion(
@@ -287,6 +300,19 @@ class _PuzzleState extends State<Puzzle> {
                 }
                 for(int i=0;i<animationPlaylist.length;i++) {
                     int affectedTileIndex = animationPlaylist[i][0];
+
+                    // change the z-index
+                    int value = 0;
+                    (animationPlaylist[i][6] == 1)? value = 5 : value = -5;
+                    setState(() {
+                      gs.incZIndex(affectedTileIndex, value);
+                    });
+                    Future.delayed(Duration(milliseconds: 2000), () {
+                      setState(() {
+                        gs.incZIndex(affectedTileIndex, value);
+                      });
+                    });
+
                     _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
                     _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
                     _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
@@ -332,7 +358,7 @@ class _PuzzleState extends State<Puzzle> {
       );
     });
 
-    return Stack(children: stackLayers);
+    return Stack(children: gestureStackLayers);
   } 
 
   Widget buildPlayGrid(double gridWidth, double gridHeight){
