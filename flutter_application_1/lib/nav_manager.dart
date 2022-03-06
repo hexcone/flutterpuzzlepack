@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,13 +40,32 @@ class _NavState extends State<NavWidget> {
   Artboard? _riveArtboardLogo;
   Artboard? _riveArtboardHome;
   Artboard? _riveArtboardAudio;
+  Artboard? _riveArtboardDarkMode;
   StateMachineController? _audioController;
+  SMIInput<bool>? _darkModeInput;
+  SMIInput<bool>? _darkModeHoverInput;
   SMIInput<bool>? _audioInput;
   SMIInput<bool>? _hoverInput;
+
+  int currentDifficulty = globals.difficulty;
+  bool isDarkMode = globals.darkModeEnabled;
+
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+
+    _timer = Timer.periodic(new Duration(milliseconds: 500), (timer) {
+        if(globals.difficulty != currentDifficulty || globals.darkModeEnabled != isDarkMode){
+          setState(() {
+            /*force re-build if globals not in sync*/
+            currentDifficulty = globals.difficulty;
+            isDarkMode = globals.darkModeEnabled;
+          });
+        }
+      }
+    );
 
     //difficulty
     StorageManager.readDifficulty().then((value) => globals.difficulty = value);
@@ -112,6 +133,31 @@ class _NavState extends State<NavWidget> {
       },
     );
 
+    // handle dark mode
+    rootBundle.load('assets/nav/audio.riv').then(
+          (data) async {
+        // Load the RiveFile from the binary data.
+        final file = RiveFile.import(data);
+
+        // The artboard is the root of the animation and gets drawn in the
+        // Rive widget.
+        final artboard = file.mainArtboard;
+        var controller =
+        StateMachineController.fromArtboard(artboard, 'State Machine 1');
+        if (controller != null) {
+          artboard.addController(controller);
+          _darkModeInput = controller.findInput('audio');
+          _darkModeHoverInput = controller.findInput('hover');
+        }
+        if (globals.darkModeEnabled) {
+          _darkModeInput?.value = true;
+        } else {
+          _darkModeInput?.value = false;
+        }
+        setState(() => _riveArtboardDarkMode = artboard);
+      },
+    );
+
   }
 
   void _initAudioPlayer() async {
@@ -144,9 +190,7 @@ class _NavState extends State<NavWidget> {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 1000),() {setState(() {
-      /*force re-build*/
-    });});
+    
 
     var controller;
     //return audio button here to overlay unto screen
@@ -236,7 +280,32 @@ class _NavState extends State<NavWidget> {
                       ),
                     ),
                   ),
-                  
+                  _riveArtboardDarkMode == null
+                      ? const SizedBox()
+                      : MouseRegion(
+                    onEnter: (_) {
+                      _darkModeHoverInput?.value = true;
+                    },
+                    onExit: (_) {
+                      _darkModeHoverInput?.value = false;
+                    },
+                    child: GestureDetector(
+                      onTapDown: (_) {
+                        globals.darkModeEnabled = !globals.darkModeEnabled;
+                        _darkModeHoverInput?.value = false;
+                        _darkModeInput?.value = globals.darkModeEnabled;
+                      },
+                      child: SizedBox(
+                        width: 64,
+                        height: 64,
+                        child: Rive(
+                          artboard: _riveArtboardDarkMode!,
+                        ),
+                      ),
+                    ),
+                  ),
+
+
                 ],
             ),
             Row(
@@ -244,7 +313,7 @@ class _NavState extends State<NavWidget> {
                 Container(
                   child: Text(
                     'Difficulty\n' + globals.difficulty.toString(),
-                    style: GoogleFonts.pacifico(color: Colors.black),
+                    style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -253,5 +322,11 @@ class _NavState extends State<NavWidget> {
           ],
         ),
       );
+  }
+
+  @override
+  void dispose() {
+    _timer!.cancel();
+    super.dispose();
   }
 }

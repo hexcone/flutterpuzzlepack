@@ -57,9 +57,27 @@ class _PuzzleState extends State<Puzzle> {
   bool shuffled = false;
   bool loading = false;
 
+  bool isDarkMode = globals.darkModeEnabled;
+  SMIInput<double>? _darkModeInput;
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
+
+    _timer = Timer.periodic(new Duration(milliseconds: 500), (timer) {
+      //force rebuild if not in sync with global values
+        if(globals.darkModeEnabled != isDarkMode){
+          isDarkMode = globals.darkModeEnabled;
+          if(isDarkMode) {
+            _darkModeInput?.value = 1;
+          } else {
+            _darkModeInput?.value = 0;
+          }
+          setState(() {});
+        }
+      }
+    );
 
     soundEffectPlayer.setAsset("assets/audio/ClickSample.wav");
     
@@ -81,9 +99,15 @@ class _PuzzleState extends State<Puzzle> {
         // The artboard is the root of the animation and gets drawn in the
         // Rive widget.
         final artboard = file.mainArtboard;
-        var controller = SimpleAnimation('Animation 1');
+        var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
         if (controller != null) {
           artboard.addController(controller);
+          _darkModeInput = controller.findInput('Number 1');
+        }
+        if(isDarkMode) {
+          _darkModeInput?.value = 1;
+        } else {
+          _darkModeInput?.value = 0;
         }
         setState(() => _riveArtboardBackground = artboard);
       },
@@ -296,6 +320,8 @@ class _PuzzleState extends State<Puzzle> {
   @override
   Widget build(BuildContext context) {
 
+    
+
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -393,6 +419,10 @@ class _PuzzleState extends State<Puzzle> {
           );
   }
 
-  
+  @override
+  void dispose() {
+    _timer!.cancel();
+    super.dispose();
+  }
 
 }

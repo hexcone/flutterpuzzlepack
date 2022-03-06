@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_application_1/nav_manager.dart';
 import 'package:rive/rive.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_application_1/globals.dart' as globals;
 
 import 'game_logic.dart';
 
@@ -60,14 +62,32 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
   /// Tracks if the animation is playing by whether controller is running.
   bool get isPlaying => _controller?.isActive ?? false;
 
+  bool isDarkMode = globals.darkModeEnabled;
+
   Artboard? _riveArtboardMenu;
   Artboard? _riveArtboardBackground;
   StateMachineController? _controller;
   SMIInput<double>? _actionInput;
+  SMIInput<double>? _darkModeInput;
+
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+
+    _timer = Timer.periodic(new Duration(milliseconds: 500), (timer) {
+      //force rebuild if not in sync with global values
+      if(globals.darkModeEnabled != isDarkMode){
+        isDarkMode = globals.darkModeEnabled;
+        if(isDarkMode) {
+          _darkModeInput?.value = 1;
+        } else {
+          _darkModeInput?.value = 0;
+        }
+        setState(() {});
+      }
+    });
 
     // Load the animation file from the bundle, note that you could also
     // download this. The RiveFile just expects a list of bytes.
@@ -79,8 +99,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
         // The artboard is the root of the animation and gets drawn in the
         // Rive widget.
         final artboard = file.mainArtboard;
-        var controller =
-        StateMachineController.fromArtboard(artboard, 'State Machine 1');
+        var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
         if (controller != null) {
           artboard.addController(controller);
           _actionInput = controller.findInput('action');
@@ -97,9 +116,15 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
         // The artboard is the root of the animation and gets drawn in the
         // Rive widget.
         final artboard = file.mainArtboard;
-        var controller = SimpleAnimation('Animation 1');
+        var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
         if (controller != null) {
           artboard.addController(controller);
+          _darkModeInput = controller.findInput('Number 1');
+        }
+        if(isDarkMode) {
+          _darkModeInput?.value = 1;
+        } else {
+          _darkModeInput?.value = 0;
         }
         setState(() => _riveArtboardBackground = artboard);
       },
@@ -197,6 +222,9 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
   @override
   Widget build(BuildContext context) {
 
+    
+
+
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -229,7 +257,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                     fit: BoxFit.fitWidth,
                     child: Text(
                       'Count to 15 in another language!',
-                      style: GoogleFonts.pacifico(),
+                      style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
                     ),
                   )
                 )
@@ -250,5 +278,11 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
         )
 
     );
+  }
+
+  @override
+  void dispose() {
+    _timer!.cancel();
+    super.dispose();
   }
 }
