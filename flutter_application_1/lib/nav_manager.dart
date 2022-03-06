@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/storage_manager.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_application_1/globals.dart' as globals;
 import 'package:just_audio/just_audio.dart';
@@ -43,6 +45,9 @@ class _NavState extends State<NavWidget> {
   @override
   void initState() {
     super.initState();
+
+    //difficulty
+    StorageManager.readDifficulty().then((value) => globals.difficulty = value);
 
     // logo
     rootBundle.load('assets/nav/logo.riv').then(
@@ -139,91 +144,112 @@ class _NavState extends State<NavWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration(milliseconds: 1000),() {setState(() {
+      /*force re-build*/
+    });});
+
     var controller;
     //return audio button here to overlay unto screen
     return
       Container(
         padding: const EdgeInsets.all(15),
         child: Row(
-          children: <Widget>[
-            Container(
-              width: 64,
-              height: 64,
-              child: 
-              GestureDetector(
-                onTapDown: (_) {
-                  Get.defaultDialog(
-                    title: "Credits",
-                    middleText: getCreditsString(),
-                    //backgroundColor: Colors.green,
-                    //titleStyle: TextStyle(color: Colors.white),
-                    //middleTextStyle: TextStyle(color: Colors.white),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: <Widget>[
+                  Container(
+                    width: 64,
+                    height: 64,
+                    child: 
+                    GestureDetector(
+                      onTapDown: (_) {
+                        Get.defaultDialog(
+                          title: "Credits",
+                          middleText: getCreditsString(),
+                          //backgroundColor: Colors.green,
+                          //titleStyle: TextStyle(color: Colors.white),
+                          //middleTextStyle: TextStyle(color: Colors.white),
 
-                  );
-                },
-                child: _riveArtboardLogo == null
-                        ? const SizedBox()
-                        : Container(
-                      child: Rive(
-                        fit: BoxFit.contain,
-                        artboard: _riveArtboardLogo!,
+                        );
+                      },
+                      child: _riveArtboardLogo == null
+                              ? const SizedBox()
+                              : Container(
+                            child: Rive(
+                              fit: BoxFit.contain,
+                              artboard: _riveArtboardLogo!,
+                            ),
+                          ),
+                    ),
+                  ),
+                  _riveArtboardHome == null
+                      ? const SizedBox()
+                      : MouseRegion(
+                    onEnter: (_) {
+                      _riveArtboardHome!.addController(controller = SimpleAnimation('active'));
+                    },
+                    onExit: (_) {
+                      _riveArtboardHome!.addController(controller = SimpleAnimation('idle'));
+                    },
+                    child: GestureDetector(
+                      onTapDown: (_) {
+                        Get.toNamed("/");
+                      },
+                      child: SizedBox(
+                        width: 64,
+                        height: 64,
+                        child: Rive(
+                          artboard: _riveArtboardHome!,
+                        ),
                       ),
                     ),
-              ),
+                  ),
+                  _riveArtboardAudio == null
+                      ? const SizedBox()
+                      : MouseRegion(
+                    onEnter: (_) {
+                      _hoverInput?.value = true;
+                    },
+                    onExit: (_) {
+                      _hoverInput?.value = false;
+                    },
+                    child: GestureDetector(
+                      onTapDown: (_) {
+                        globals.audioEnabled = !globals.audioEnabled;
+                        _hoverInput?.value = false;
+                        _audioInput?.value = globals.audioEnabled;
+                        if (globals.audioEnabled) {
+                          if(!_audioPlayer.playing)
+                            _audioPlayer.play();
+                          _audioPlayer.setVolume(DEFAULT_VOLUME);
+                        } else{
+                          _audioPlayer.setVolume(0);
+                        }
+                      },
+                      child: SizedBox(
+                        width: 64,
+                        height: 64,
+                        child: Rive(
+                          artboard: _riveArtboardAudio!,
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                ],
             ),
-            _riveArtboardHome == null
-                ? const SizedBox()
-                : MouseRegion(
-              onEnter: (_) {
-                _riveArtboardHome!.addController(controller = SimpleAnimation('active'));
-              },
-              onExit: (_) {
-                _riveArtboardHome!.addController(controller = SimpleAnimation('idle'));
-              },
-              child: GestureDetector(
-                onTapDown: (_) {
-                  Get.toNamed("/");
-                },
-                child: SizedBox(
-                  width: 64,
-                  height: 64,
-                  child: Rive(
-                    artboard: _riveArtboardHome!,
+            Row(
+              children: [
+                Container(
+                  child: Text(
+                    'Difficulty\n' + globals.difficulty.toString(),
+                    style: GoogleFonts.pacifico(color: Colors.black),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-            ),
-            _riveArtboardAudio == null
-                ? const SizedBox()
-                : MouseRegion(
-              onEnter: (_) {
-                _hoverInput?.value = true;
-              },
-              onExit: (_) {
-                _hoverInput?.value = false;
-              },
-              child: GestureDetector(
-                onTapDown: (_) {
-                  globals.audioEnabled = !globals.audioEnabled;
-                  _hoverInput?.value = false;
-                  _audioInput?.value = globals.audioEnabled;
-                  if (globals.audioEnabled) {
-                    if(!_audioPlayer.playing)
-                      _audioPlayer.play();
-                    _audioPlayer.setVolume(DEFAULT_VOLUME);
-                  } else{
-                    _audioPlayer.setVolume(0);
-                  }
-                },
-                child: SizedBox(
-                  width: 64,
-                  height: 64,
-                  child: Rive(
-                    artboard: _riveArtboardAudio!,
-                  ),
-                ),
-              ),
-            ),
+              ],
+            )
           ],
         ),
       );

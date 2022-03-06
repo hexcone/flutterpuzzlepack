@@ -200,6 +200,8 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
+    int extraTopPadding = !kIsWeb ? 100 : 0;
+
     return Scaffold(
         backgroundColor: Colors.white,
         /*
@@ -222,7 +224,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
               children: [
                 Container (
                   width: min(screenWidth, screenHeight) * 0.6,
-                  padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.1),
+                  padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.1 + extraTopPadding),
                   child: FittedBox(
                     fit: BoxFit.fitWidth,
                     child: Text(

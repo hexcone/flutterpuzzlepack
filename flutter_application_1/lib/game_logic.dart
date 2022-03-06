@@ -3,6 +3,7 @@ import 'dart:async';
 
 //import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_application_1/storage_manager.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -254,6 +255,12 @@ class _PuzzleState extends State<Puzzle> {
                       opaque: false,
                       pageBuilder: (BuildContext context, _, __) =>
                           WinScreen(gs: gs)));
+                  
+                  int newDifficulty = globals.difficulty+1;
+                  StorageManager.saveDifficulty(newDifficulty);
+                  setState(() {
+                    globals.difficulty = newDifficulty;
+                  });   
                 }
               }
             },
@@ -309,7 +316,7 @@ class _PuzzleState extends State<Puzzle> {
     Future.delayed(Duration(milliseconds: 1000),() {
       if(!shuffled) {
         //some action on complete
-        List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(1);
+        List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(globals.difficulty);
         print(shuffleAnimationPlaylist);
 
         setState(() {
@@ -386,5 +393,6 @@ class _PuzzleState extends State<Puzzle> {
           );
   }
 
+  
 
 }

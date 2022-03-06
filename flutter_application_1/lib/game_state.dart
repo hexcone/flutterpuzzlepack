@@ -179,7 +179,7 @@ class GameState {
     List<List<int>> animationListRow = [];
     List<List<int>> animationListCol = [];
     var rng = Random();
-    for(int i = 0; i < depth; i++) {
+    for(int i = 0; i < depth * 2; i++) {
       while (true) {
         int direction = rng.nextInt(4);
         int randomTileNum = -1;
