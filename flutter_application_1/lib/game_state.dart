@@ -209,6 +209,11 @@ class GameState {
     }
     printBoard();
     numMoves = 0; //reset num moves
+
+    if(isWinningState()) {
+      return shuffleBoard(depth); //handle case where shuffling goes back to original position
+    }
+
     return [animationListRow, animationListCol];
   }
 
