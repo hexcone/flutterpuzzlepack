@@ -180,6 +180,11 @@ class _NavState extends State<NavWidget> {
     credits.add("--------------------------------------");
     credits.add("Background Music: AShamaluevMusic - https://www.ashamaluevmusic.com/");
     credits.add("Tile Sound Effects: \"Extra bonus in a video game\" - https://mixkit.co/");
+    credits.add("Nav icons - https://rive.app/community/1298-2487-animated-icon-set-1-color/");
+    credits.add("Dark/ light mode icon - https://rive.app/community/858-1665-switch-for-dark-and-light-mode-transitions/");
+    credits.add("Background - https://rive.app/community/1178-2268-fishbaloony/");
+    credits.add("Menu - https://rive.app/community/317-615-interaction-menu-example/");
+    credits.add("Loader - https://rive.app/community/425-786-circular-progress-indicator/");
 
     String ret = "";
     for(int i=0;i<credits.length;i++){
