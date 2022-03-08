@@ -73,6 +73,7 @@ flutter:
     - assets/audio/
     - assets/ar/
     - assets/cn/
+    - assets/hi/
     - assets/nav/
     - assets/google_fonts/
 

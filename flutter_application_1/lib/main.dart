@@ -134,7 +134,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
   Widget buildMenuGraphics(double dimension) {
     int extraTopPadding = !kIsWeb ? 100 : 0;
     return Padding(
-        padding: EdgeInsets.only(left: 0, top: 0 + extraTopPadding.toDouble(), bottom: 0, right: 0),
+        padding: EdgeInsets.only(left: 0, top: dimension * 0.1 + extraTopPadding.toDouble(), bottom: 0, right: 0),
         child: Container(
                   height: dimension,
                   width: dimension,
@@ -147,10 +147,10 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
 
   Widget buildMenuGesture(double screenDimension) {
     int extraTopPadding = !kIsWeb ? 100 : 0;
-    List<Widget> stackLayers = List<Widget>.generate(2, (index) {
+    List<Widget> stackLayers = List<Widget>.generate(3, (index) {
       return Padding(
-        padding: EdgeInsets.only(left: screenDimension * 0.31,
-            top: index * screenDimension * 0.130 + screenDimension * 0.32 + extraTopPadding,
+        padding: EdgeInsets.only(left: screenDimension * 0.29,
+            top: index * screenDimension * 0.19 + screenDimension * 0.32 + extraTopPadding,
             bottom: 0,
             right: 0),
         child:
@@ -176,16 +176,13 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                   MaterialPageRoute(
                       builder: (context) => const Puzzle(lang: 'cn')),
                 );
+              } else if (index == 2) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Puzzle(lang: 'hi')),
+                );
               }
-              /*
-                else if (index == 2) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Puzzle(lang: 'jp')),
-                  );
-                }
-                */
             },
             onTapCancel: () {
             },
@@ -195,8 +192,8 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
             Opacity(
               opacity: 0,
               child: Container(
-                height: screenDimension * 0.1,
-                width: screenDimension * 0.38,
+                height: screenDimension * 0.12,
+                width: screenDimension * 0.42,
                 color: Colors.pink,
               ),
             ),
@@ -248,7 +245,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
               children: [
                 Container (
                   width: min(screenWidth, screenHeight) * 0.6,
-                  padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.1 + extraTopPadding),
+                  padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.15 + extraTopPadding),
                   child: FittedBox(
                     fit: BoxFit.fitWidth,
                     child: Text(
