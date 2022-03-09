@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:async';
 
@@ -207,14 +208,19 @@ class _PuzzleState extends State<Puzzle> {
       Rive(artboard: _boardBorder!,),
     ];
 
-    int extraTopPadding = !kIsWeb ? 100 : 0;
+    int extraTopPadding = !kIsWeb ? Platform.isAndroid || Platform.isIOS ? 100 : 0 : 0;
 
-    stackLayers = List<Widget>.generate(items.length - 1, (index) {
+    List<Widget> gestureGrid= <Widget>[];
+
+    stackLayers = List<Widget>.generate(items.length, (index) {
+
+      gestureGrid.add( buildGestureDetectorTile(tileDimension, index));
+
       return Indexed(
         key: Key(index.toString()),
-        index: gs.getZIndex()[index],
+        index: index != items.length -1 ? gs.getZIndex()[index] : 999,
         child: Padding(
-          padding: EdgeInsets.only(left: 0, top: 0 + extraTopPadding.toDouble(), bottom: 0, right: 0),
+          padding: EdgeInsets.only(left: 0, top: extraTopPadding.toDouble(), bottom: 0, right: 0),
           child: Container(
             height: tileDimension,
             width: tileDimension,
@@ -227,24 +233,22 @@ class _PuzzleState extends State<Puzzle> {
     return Stack(children: [
       Indexer(children: stackLayers),
       Padding(
-        padding: EdgeInsets.only(left: 0, top: 0 + extraTopPadding.toDouble(), bottom: 0, right: 0),
-        child: Container(
-            height: tileDimension,
-            width: tileDimension,
-            child: items[15]
+        padding: EdgeInsets.only(left: 0, top: extraTopPadding.toDouble(), bottom: 0, right: 0),
+        child: Transform.scale(scale: 0.61, 
+          child:
+            Stack(children: gestureGrid))
         ),
-      ),
     ]);
   }
 
   Widget buildAnimationLayer(double screenWidth, double screenHeight) {
     var rng = Random();
 
-    Future.delayed(Duration(milliseconds: 1000),() {
-      setState(() {
-        _start = screenWidth;
-      });
-    });
+    // Future.delayed(Duration(milliseconds: 1000),() {
+    //   setState(() {
+    //     _start = screenWidth;
+    //   });
+    // });
 
     return 
     Directionality(
@@ -266,13 +270,10 @@ class _PuzzleState extends State<Puzzle> {
     );
   }
 
-  Widget buildGestureGrid(double screenDimension, double tileDimension) { 
-
-    double tileDimension = screenDimension * 0.62 / 4;
-    int extraTopPadding = !kIsWeb ? 100 : 0;
-    List<Widget> gestureStackLayers = List<Widget>.generate(16, (index) {
-      return Padding(
-        padding: EdgeInsets.only(left: index%4 * tileDimension + screenDimension * 0.20, top: index~/4 * tileDimension + screenDimension * 0.18 + extraTopPadding, bottom: 0, right: 0),
+  Widget buildGestureDetectorTile(double tileDimension, int index){
+    return 
+    Padding(
+      padding: EdgeInsets.only(left: index%4 * tileDimension/4, top: index~/4 * tileDimension/4, bottom: 0, right: 0),
         child: MouseRegion(
           onEnter: (_) {
             // handle hover animation
@@ -346,30 +347,25 @@ class _PuzzleState extends State<Puzzle> {
             },
             child:
             Opacity(
-              opacity: 0,
+              opacity: 0.3,
               child: Container(
-                height: tileDimension,
-                width: tileDimension,
+                height: tileDimension/4,
+                width: tileDimension/4,
                 color: Colors.pink,
               )
             ),
           ),
         ),
       );
-    });
-
-    return Stack(children: gestureStackLayers);
-  } 
+  }
 
   Widget buildPlayGrid(double gridWidth, double gridHeight){
     //Calculate tile dimensions
     double dimensionLimit = min(gridWidth, gridHeight);
-    double tileDimension = dimensionLimit /4;
 
     return Stack(children: 
     [
       buildTileGrid(dimensionLimit), 
-      buildGestureGrid(dimensionLimit, tileDimension),
     ]);
   }
 
