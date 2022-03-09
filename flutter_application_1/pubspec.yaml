@@ -31,6 +31,7 @@ dependencies:
     sdk: flutter
   rive:
   just_audio:
+  just_audio_libwinmedia:
   localstorage:
 
 
