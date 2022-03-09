@@ -150,7 +150,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     List<Widget> stackLayers = List<Widget>.generate(3, (index) {
       return Padding(
         padding: EdgeInsets.only(left: screenDimension * 0.29,
-            top: index * screenDimension * 0.19 + screenDimension * 0.32 + extraTopPadding,
+            top: index * screenDimension * 0.19 + screenDimension * 0.30 + extraTopPadding,
             bottom: 0,
             right: 0),
         child:
@@ -190,7 +190,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
             },
             child:
             Opacity(
-              opacity: 0,
+              opacity: 0.3,
               child: Container(
                 height: screenDimension * 0.12,
                 width: screenDimension * 0.42,
