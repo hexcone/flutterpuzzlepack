@@ -43,7 +43,6 @@ class _NavState extends State<NavWidget> {
   Artboard? _riveArtboardDarkMode;
   StateMachineController? _audioController;
   SMIInput<bool>? _darkModeInput;
-  SMIInput<bool>? _darkModeHoverInput;
   SMIInput<bool>? _audioInput;
   SMIInput<bool>? _hoverInput;
 
@@ -134,7 +133,7 @@ class _NavState extends State<NavWidget> {
     );
 
     // handle dark mode
-    rootBundle.load('assets/nav/audio.riv').then(
+    rootBundle.load('assets/dark_light_mode.riv').then(
           (data) async {
         // Load the RiveFile from the binary data.
         final file = RiveFile.import(data);
@@ -146,8 +145,7 @@ class _NavState extends State<NavWidget> {
         StateMachineController.fromArtboard(artboard, 'State Machine 1');
         if (controller != null) {
           artboard.addController(controller);
-          _darkModeInput = controller.findInput('audio');
-          _darkModeHoverInput = controller.findInput('hover');
+          _darkModeInput = controller.findInput('dark_mode');
         }
         if (globals.darkModeEnabled) {
           _darkModeInput?.value = true;
@@ -285,41 +283,45 @@ class _NavState extends State<NavWidget> {
                       ),
                     ),
                   ),
-                  _riveArtboardDarkMode == null
-                      ? const SizedBox()
-                      : MouseRegion(
-                    onEnter: (_) {
-                      _darkModeHoverInput?.value = true;
-                    },
-                    onExit: (_) {
-                      _darkModeHoverInput?.value = false;
-                    },
-                    child: GestureDetector(
-                      onTapDown: (_) {
-                        globals.darkModeEnabled = !globals.darkModeEnabled;
-                        _darkModeHoverInput?.value = false;
-                        _darkModeInput?.value = globals.darkModeEnabled;
-                      },
-                      child: SizedBox(
-                        width: 64,
-                        height: 64,
-                        child: Rive(
-                          artboard: _riveArtboardDarkMode!,
-                        ),
-                      ),
-                    ),
-                  ),
-
-
                 ],
             ),
             Row(
               children: [
                 Container(
                   child: Text(
-                    'Difficulty\n' + globals.difficulty.toString(),
-                    style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
+                    'Difficulty: ',
+                    style: GoogleFonts.pacifico(
+                      color: globals.darkModeEnabled ? Colors.white : Colors.black,
+                      fontSize: 24,
+                    ),
                     textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  child: Text(
+                    globals.difficulty.toString() + "     ",
+                    style: GoogleFonts.pacifico(
+                      color: globals.darkModeEnabled ? Colors.white : Colors.black,
+                      fontSize: 24,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                _riveArtboardDarkMode == null
+                    ? const SizedBox()
+                    : MouseRegion(
+                  child: GestureDetector(
+                    onTapDown: (_) {
+                      globals.darkModeEnabled = !globals.darkModeEnabled;
+                      _darkModeInput?.value = globals.darkModeEnabled;
+                    },
+                    child: SizedBox(
+                      width: 96,
+                      height: 64,
+                      child: Rive(
+                        artboard: _riveArtboardDarkMode!,
+                      ),
+                    ),
                   ),
                 ),
               ],
