@@ -476,6 +476,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _animationController.dispose();
     _timer!.cancel();
     super.dispose();
   }
