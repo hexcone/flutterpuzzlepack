@@ -289,6 +289,14 @@ class _PuzzleState extends State<Puzzle> {
             onTapDown: (_) {
               if (gestureEnabled) {
                 if(globals.audioEnabled) {
+                  
+                  soundEffectPlayer.processingStateStream.listen((value) {
+                    print('Value from controller: $value');
+                    if (value == ProcessingState.completed) {
+                        soundEffectPlayer.stop();
+                        soundEffectPlayer.seek(Duration.zero);
+                    }
+                  });
                   soundEffectPlayer.seek(Duration.zero);
                   soundEffectPlayer.play();
                 }
