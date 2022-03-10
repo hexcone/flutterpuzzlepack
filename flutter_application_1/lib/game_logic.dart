@@ -303,9 +303,11 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
                       gs.incZIndex(affectedTileIndex, value);
                     });
                     Future.delayed(Duration(milliseconds: 2000), () {
-                      setState(() {
-                        gs.incZIndex(affectedTileIndex, value);
-                      });
+                      if (mounted) {
+                        setState(() {
+                          gs.incZIndex(affectedTileIndex, value);
+                        });
+                      }
                     });
 
                     _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
@@ -394,7 +396,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
     });
 
     Future.delayed(Duration(milliseconds: 1000),() {
-      if(!shuffled) {
+      if(!shuffled && mounted) {
         //some action on complete
         List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(globals.difficulty);
         print(shuffleAnimationPlaylist);
@@ -412,27 +414,27 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
           
         });
         Future.delayed(Duration(milliseconds: 2000),() {
-          setState(() {
-            for(int i=0;i<shuffleAnimationPlaylist[1].length;i++) {
-              
-                int affectedTileIndex = shuffleAnimationPlaylist[1][i][0];
-                _indexes?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][1].toDouble();
-                _rows?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][2] == 1 ? true : false;
-                _columns?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][3] == 1 ? true : false;
-                _moves?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][4] == 1 ? true : false;
-              
-            }
-
-            for(int i=0;i<_riveArtboard!.length;i++) {
-              if(gs.findIndexOfTile(i + 1) == i) {
-                _riveArtboard![i].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
+          if(mounted) {
+            setState(() {
+              for(int i=0;i<shuffleAnimationPlaylist[1].length;i++) {
+                
+                  int affectedTileIndex = shuffleAnimationPlaylist[1][i][0];
+                  _indexes?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][1].toDouble();
+                  _rows?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][2] == 1 ? true : false;
+                  _columns?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][3] == 1 ? true : false;
+                  _moves?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][4] == 1 ? true : false;
+                
               }
-            }
-            
-            Timer(Duration(seconds: 1), () { Navigator.pop(context); });
-          });
 
-          
+              for(int i=0;i<_riveArtboard!.length;i++) {
+                if(gs.findIndexOfTile(i + 1) == i) {
+                  _riveArtboard![i].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
+                }
+              }
+              
+              Timer(Duration(seconds: 1), () { Navigator.pop(context); });
+            });
+          }
          });
         shuffled = true;
       }
