@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_application_1/random_animation_manager.dart';
 import 'package:flutter_application_1/storage_manager.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class Puzzle extends StatefulWidget {
   State<Puzzle> createState() => _PuzzleState();
 }
 
-class _PuzzleState extends State<Puzzle> {
+class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
 
   /// Tracks if the animation is playing by whether controller is running.
   bool get isPlaying => _controller?.isActive ?? false;
@@ -58,15 +59,21 @@ class _PuzzleState extends State<Puzzle> {
   bool gestureEnabled = true;
   bool shuffled = false;
   bool loading = false;
+  bool test = false;
 
   bool isDarkMode = globals.darkModeEnabled;
   SMIInput<double>? _darkModeInput;
   Timer? _timer;
   double _start = -100;
 
+  late AnimationController _animationController;
+
   @override
   void initState() {
     super.initState();
+
+    _animationController = AnimationController(
+        duration: const Duration(milliseconds: 5000), vsync: this);
 
     _timer = Timer.periodic(new Duration(milliseconds: 500), (timer) {
       //force rebuild if not in sync with global values
@@ -185,7 +192,7 @@ class _PuzzleState extends State<Puzzle> {
         },
       );
 
-  Widget buildTileGrid(double tileDimension) {
+  Widget buildTileGrid(double tileDimension, double screenWidth, double screenHeight) {
     if (_riveArtboard?.length != 15){
       return SizedBox();
     }
@@ -232,6 +239,7 @@ class _PuzzleState extends State<Puzzle> {
 
     return Stack(children: [
       Indexer(children: stackLayers),
+      buildAnimationLayer(screenWidth, screenHeight),
       Padding(
         padding: EdgeInsets.only(left: 0, top: extraTopPadding.toDouble(), bottom: 0, right: 0),
         child: Transform.scale(scale: 0.61, 
@@ -244,30 +252,7 @@ class _PuzzleState extends State<Puzzle> {
   Widget buildAnimationLayer(double screenWidth, double screenHeight) {
     var rng = Random();
 
-    // Future.delayed(Duration(milliseconds: 1000),() {
-    //   setState(() {
-    //     _start = screenWidth;
-    //   });
-    // });
-
-    return 
-    Directionality(
-      textDirection: TextDirection.ltr,
-      child: AnimatedPositionedDirectional(
-        top: rng.nextDouble() * screenHeight,
-        start: _start,
-        width: 100,
-        height: 200,
-        duration: Duration(milliseconds: 2000),
-        // Perform the end callback
-        onEnd: () {},
-        curve: Curves.slowMiddle,
-        child: Container(
-          color: Colors.blue,
-          child: Text("Early riser")
-        )
-      )
-    );
+    return StaggerAnimation(controller: _animationController.view, animationAssetIndex: 0, animationPaths: [[0,0], [100, 100], [200,200], [screenHeight, screenWidth]]);
   }
 
   Widget buildGestureDetectorTile(double tileDimension, int index){
@@ -303,6 +288,7 @@ class _PuzzleState extends State<Puzzle> {
                 List<List<int>> animationPlaylist = gs.tap(index);
                 print("Click on GestureDetector: " + (index).toString());
                 print(animationPlaylist);
+                _playAnimation();
                 gs.printBoard();
                 if(animationPlaylist.length > 0) {
                   gestureEnabled = false;
@@ -373,8 +359,18 @@ class _PuzzleState extends State<Puzzle> {
 
     return Stack(children: 
     [
-      buildTileGrid(dimensionLimit), 
+      buildTileGrid(dimensionLimit, gridWidth, gridHeight), 
     ]);
+  }
+
+  Future<void> _playAnimation() async {
+    try {
+      await _animationController.forward().orCancel;
+      await _animationController.reverse().orCancel;
+    } on TickerCanceled {
+      // the animation got canceled, probably because we were disposed
+      print("cancelled");
+    }
   }
 
   @override
@@ -472,7 +468,6 @@ class _PuzzleState extends State<Puzzle> {
                               ],
                             ),
                     ),
-                    buildAnimationLayer(screenWidth, screenHeight)
                   ],
                 )
             )
