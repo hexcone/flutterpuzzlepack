@@ -145,12 +145,28 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     );
   }
 
-  Widget buildMenuGesture(double screenDimension) {
+  double calculate_top(int index, double screenDimension, double width, double height, int extraTopPadding) {
+    if (width / height > 0.98) {
+      return index * screenDimension * 0.18 + screenDimension * 0.31 + extraTopPadding;
+    }
+    else if (width / height > 0.927) {
+      return index * screenDimension * 0.19 + screenDimension * 0.32 + extraTopPadding;
+    }
+    else {
+      return index * screenDimension * 0.2 + screenDimension * 0.34 + extraTopPadding;
+    }
+  }
+
+  double calculate_height(double screenDimension, double width, double height) {
+      return screenDimension * 0.12;
+  }
+
+  Widget buildMenuGesture(double screenDimension, double width, double height) {
     int extraTopPadding = !kIsWeb ? 100 : 0;
     List<Widget> stackLayers = List<Widget>.generate(3, (index) {
       return Padding(
         padding: EdgeInsets.only(left: screenDimension * 0.29,
-            top: index * screenDimension * 0.19 + screenDimension * 0.30 + extraTopPadding,
+            top: calculate_top(index, screenDimension, width, height, extraTopPadding),
             bottom: 0,
             right: 0),
         child:
@@ -190,9 +206,9 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
             },
             child:
             Opacity(
-              opacity: 0.3,
+              opacity: 0,
               child: Container(
-                height: screenDimension * 0.12,
+                height: calculate_height(screenDimension, width, height),
                 width: screenDimension * 0.42,
                 color: Colors.pink,
               ),
@@ -212,7 +228,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     return Stack(children:
     [
       buildMenuGraphics(dimensionLimit),
-      buildMenuGesture(dimensionLimit),
+      buildMenuGesture(dimensionLimit, width, height),
     ]);
   }
 
