@@ -89,9 +89,8 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
         });
       }
     );
-    
 
-    _globalTimer = Timer.periodic(new Duration(milliseconds: 500), (timer) {
+    _globalTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       //force rebuild if not in sync with global values
         if(globals.darkModeEnabled != isDarkMode){
           isDarkMode = globals.darkModeEnabled;
@@ -106,14 +105,6 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
     );
 
     soundEffectPlayer.setAsset("assets/audio/ClickSample.wav");
-    soundEffectPlayer.processingStateStream.listen((value) {
-      print('Value from controller: $value');
-      if (value == ProcessingState.completed) {
-        print("boom");
-          //soundEffectPlayer.pause();
-          //soundEffectPlayer.seek(Duration.zero);
-      }
-    });
 
     rootBundle.load('assets/paratrooper.riv').then(
           (data) async {
@@ -124,9 +115,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
         // Rive widget.
         final artboard = file.mainArtboard;
         var controller = SimpleAnimation('Animation 1');
-        if (controller != null) {
-          artboard.addController(controller);
-        }
+        artboard.addController(controller);
         setState(() => _riveArtboardParatrooper = artboard);
       },
     );
@@ -140,9 +129,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
         // Rive widget.
         final artboard = file.mainArtboard;
         var controller = SimpleAnimation('Animation 1');
-        if (controller != null) {
-          artboard.addController(controller);
-        }
+        artboard.addController(controller);
         setState(() => _riveArtboardFishBalloon = artboard);
       },
     );
@@ -195,8 +182,6 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
       '/Tile_15.riv',
     ];
 
-    var controller;
-
     for(int i = 0; i < assets.length; i++) {
       // Load the animation file from the bundle, note that you could also
       // download this. The RiveFile just expects a list of bytes.
@@ -208,7 +193,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
           // The artboard is the root of the animation and gets drawn in the
           // Rive widget.
           final artboard = file.mainArtboard;
-          controller = StateMachineController.fromArtboard(
+          dynamic controller = StateMachineController.fromArtboard(
             artboard,
             'State Machine 1',
             onStateChange: _onStateChange,
