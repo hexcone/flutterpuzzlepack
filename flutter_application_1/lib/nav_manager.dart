@@ -183,6 +183,8 @@ class _NavState extends State<NavWidget> {
     credits.add("Background - https://rive.app/community/1178-2268-fishbaloony/");
     credits.add("Menu - https://rive.app/community/317-615-interaction-menu-example/");
     credits.add("Loader - https://rive.app/community/425-786-circular-progress-indicator/");
+    credits.add("Paratrooper - https://rive.app/community/1738-3431-raster-graphics-example/");
+    credits.add("Fish Balloon - https://rive.app/community/1178-2268-fishbaloony/");
 
     String ret = "";
     for(int i=0;i<credits.length;i++){
@@ -193,12 +195,8 @@ class _NavState extends State<NavWidget> {
 
   @override
   Widget build(BuildContext context) {
-    
 
-    var controller;
-    //return audio button here to overlay unto screen
-    return
-      Container(
+    Widget navbarContainer = Container(
         padding: const EdgeInsets.all(15),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -234,10 +232,10 @@ class _NavState extends State<NavWidget> {
                       ? const SizedBox()
                       : MouseRegion(
                     onEnter: (_) {
-                      _riveArtboardHome!.addController(controller = SimpleAnimation('active'));
+                      _riveArtboardHome!.addController(SimpleAnimation('active'));
                     },
                     onExit: (_) {
-                      _riveArtboardHome!.addController(controller = SimpleAnimation('idle'));
+                      _riveArtboardHome!.addController(SimpleAnimation('idle'));
                     },
                     child: GestureDetector(
                       onTapDown: (_) {
@@ -252,6 +250,8 @@ class _NavState extends State<NavWidget> {
                       ),
                     ),
                   ),
+
+                  
                   _riveArtboardAudio == null
                       ? const SizedBox()
                       : MouseRegion(
@@ -288,25 +288,16 @@ class _NavState extends State<NavWidget> {
             Row(
               children: [
                 Container(
-                  child: Text(
-                    'Difficulty: ',
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth, child: Text(
+                    'Difficulty: ' + globals.difficulty.toString() + "     ",
                     style: GoogleFonts.pacifico(
                       color: globals.darkModeEnabled ? Colors.white : Colors.black,
-                      fontSize: 24,
+                      fontSize: 24
                     ),
                     textAlign: TextAlign.center,
                   ),
-                ),
-                Container(
-                  child: Text(
-                    globals.difficulty.toString() + "     ",
-                    style: GoogleFonts.pacifico(
-                      color: globals.darkModeEnabled ? Colors.white : Colors.black,
-                      fontSize: 24,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                )),
                 _riveArtboardDarkMode == null
                     ? const SizedBox()
                     : MouseRegion(
@@ -329,6 +320,18 @@ class _NavState extends State<NavWidget> {
           ],
         ),
       );
+    
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    if(screenWidth < 455.0) {
+      return FittedBox(
+        fit: BoxFit.contain,
+        child: navbarContainer,
+      );
+    }
+
+    return navbarContainer;
+      
   }
 
   @override
