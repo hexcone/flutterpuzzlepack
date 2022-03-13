@@ -92,6 +92,14 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
     soundEffectPlayer.setAsset("assets/audio/ClickSample.wav");
     
     const boardBorderAsset = "assets/border.riv";
+    soundEffectPlayer.processingStateStream.listen((value) {
+      print('Value from controller: $value');
+      if (value == ProcessingState.completed) {
+        print("boom");
+          //soundEffectPlayer.pause();
+          //soundEffectPlayer.seek(Duration.zero);
+      }
+    });
 
     rootBundle.load(boardBorderAsset).then(
       (data) async{
@@ -273,17 +281,14 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
           GestureDetector(
             onTapDown: (_) {
               if (gestureEnabled) {
-                if(globals.audioEnabled) {
+                if(globals.audioEnabled) {                  
                   
-                  soundEffectPlayer.processingStateStream.listen((value) {
-                    print('Value from controller: $value');
-                    if (value == ProcessingState.completed) {
-                        soundEffectPlayer.stop();
-                        soundEffectPlayer.seek(Duration.zero);
-                    }
-                  });
-                  soundEffectPlayer.seek(Duration.zero);
+                  if(soundEffectPlayer.playing) {
+                    soundEffectPlayer.pause();
+                    soundEffectPlayer.seek(Duration.zero);
+                  }
                   soundEffectPlayer.play();
+                  
                 }
                 List<List<int>> animationPlaylist = gs.tap(index);
                 print("Click on GestureDetector: " + (index).toString());
