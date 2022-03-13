@@ -480,11 +480,12 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
       }
     });
 
-    Future.delayed(Duration(milliseconds: 1000),() {
+    Future.delayed(Duration(milliseconds: 100),() {
       if(!shuffled && mounted) {
         //some action on complete
         List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(globals.difficulty);
         print(shuffleAnimationPlaylist);
+
 
         setState(() {
           for(int i=0;i<shuffleAnimationPlaylist[0].length;i++) {
@@ -498,7 +499,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
           }
           
         });
-        Future.delayed(Duration(milliseconds: 2000),() {
+        Future.delayed(Duration(milliseconds: 300),() {
           if(mounted) {
             setState(() {
               for(int i=0;i<shuffleAnimationPlaylist[1].length;i++) {
