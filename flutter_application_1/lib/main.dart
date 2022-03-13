@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Language Tiles - Learn to count to 15 in different languages!',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const ExampleStateMachine(title: 'Flutter Demo Home Page'),
+      home: const LanguageTilesStateMachine(title: 'Language Tiles - Learn to count to 15 in different languages!'),
       builder: (context, child) => NavManager(child: child!),
       navigatorKey: Get.key,
       initialRoute: "/",
@@ -49,17 +49,17 @@ class MyApp extends StatelessWidget {
 
 
 /// An example showing how to drive two boolean state machine inputs.
-class ExampleStateMachine extends StatefulWidget {
+class LanguageTilesStateMachine extends StatefulWidget {
   //const ExampleStateMachine({Key? key}) : super(key: key);
-  const ExampleStateMachine({Key? key, required this.title}) : super(key: key);
+  const LanguageTilesStateMachine({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _ExampleStateMachineState createState() => _ExampleStateMachineState();
+  _LanguageTilesStateMachineState createState() => _LanguageTilesStateMachineState();
 }
 
-class _ExampleStateMachineState extends State<ExampleStateMachine> {
+class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
   /// Tracks if the animation is playing by whether controller is running.
   bool get isPlaying => _controller?.isActive ?? false;
 
