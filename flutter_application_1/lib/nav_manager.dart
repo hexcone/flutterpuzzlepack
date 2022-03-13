@@ -196,6 +196,7 @@ class _NavState extends State<NavWidget> {
     credits.add("Loader - https://rive.app/community/425-786-circular-progress-indicator/");
     credits.add("Paratrooper - https://rive.app/community/1738-3431-raster-graphics-example/");
     credits.add("Fish Balloon - https://rive.app/community/1178-2268-fishbaloony/");
+    credits.add("Difficulty level icon - https://dribbble.com/shots/2644775-Difficulty-Level-Selection-Interface");
 
     String ret = "";
     for(int i=0;i<credits.length;i++){
