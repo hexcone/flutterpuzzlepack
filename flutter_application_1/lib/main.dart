@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -132,7 +133,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
   }
 
   Widget buildMenuGraphics(double dimension) {
-    int extraTopPadding = !kIsWeb ? 100 : 0;
+    int extraTopPadding = (Platform.isLinux || kIsWeb) ? 0 : 100;
     return Padding(
         padding: EdgeInsets.only(left: 0, top: dimension * 0.1 + extraTopPadding.toDouble(), bottom: 0, right: 0),
         child: Container(
@@ -162,7 +163,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
   }
 
   Widget buildMenuGesture(double screenDimension, double width, double height) {
-    int extraTopPadding = !kIsWeb ? 100 : 0;
+    int extraTopPadding = (Platform.isLinux || kIsWeb) ? 0 : 100;
     List<Widget> stackLayers = List<Widget>.generate(3, (index) {
       return Padding(
         padding: EdgeInsets.only(left: screenDimension * 0.29,
@@ -237,7 +238,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    int extraTopPadding = !kIsWeb ? 100 : 0;
+    int extraTopPadding = (Platform.isLinux || kIsWeb) ? 0 : 100;
 
     return Scaffold(
         backgroundColor: Colors.white,
