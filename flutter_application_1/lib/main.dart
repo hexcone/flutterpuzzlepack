@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_application_1/nav_manager.dart';
 import 'package:rive/rive.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_application_1/globals.dart' as globals;
 
 import 'game_logic.dart';
@@ -132,6 +132,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
     );
   }
 
+  /*
   Widget buildMenuGraphics(double dimension) {
     int extraTopPadding = (Platform.isLinux || kIsWeb) ? 0 : 100;
     return Padding(
@@ -232,13 +233,46 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
       buildMenuGesture(dimensionLimit, width, height),
     ]);
   }
+  */
+
+  final controller = PageController(viewportFraction: 0.8, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    int extraTopPadding = (Platform.isLinux || kIsWeb) ? 0 : 100;
+    int extraTopPadding = 0;
+    if (defaultTargetPlatform == TargetPlatform.android ||defaultTargetPlatform == TargetPlatform.windows) {
+      extraTopPadding = 100;
+    }
+    else if (defaultTargetPlatform == TargetPlatform.linux || defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.iOS) {
+      extraTopPadding = 0;
+    }
+    else {
+      extraTopPadding = 0;
+    }
+
+
+
+    final pages = List.generate(6, (index) =>
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.white30,
+          ),
+          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          child: Container(
+            height: 280,
+            child: Center(
+              child: Text(
+                "Page $index",
+                style: TextStyle(color: Colors.indigo),
+              ),
+            ),
+          ),
+        ),
+    );
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -273,6 +307,48 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                 )
               ],
             ),
+
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.25 + extraTopPadding),
+                  ),
+                  SizedBox(
+                    height: min(screenWidth, screenHeight) * 0.6,
+                    child: PageView.builder(
+                      controller: controller,
+                      // itemCount: pages.length,
+                      itemBuilder: (_, index) {
+                        return pages[index % pages.length];
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16, bottom: 12),
+                  ),
+                  SmoothPageIndicator(
+                    controller: controller,
+                    count: pages.length,
+                    effect: ScrollingDotsEffect(
+                      activeStrokeWidth: 2.6,
+                      activeDotScale: 1.3,
+                      maxVisibleDots: 5,
+                      radius: 8,
+                      spacing: 10,
+                      dotHeight: 12,
+                      dotWidth: 12,
+                    ),
+                    onDotClicked: (index){
+                      print("onDotClicked = " + index.toString());
+                    }
+                  ),
+                ],
+              ),
+            ),
+
+            /*
             Center(
               child: _riveArtboardMenu == null
                   ? const SizedBox()
@@ -284,6 +360,7 @@ class _ExampleStateMachineState extends State<ExampleStateMachine> {
                 ],
               ),
             ),
+            */
           ],
         )
 
