@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/level_picker.dart';
 import 'package:flutter_application_1/nav_manager.dart';
 import 'package:rive/rive.dart';
 import 'package:get/get.dart';
@@ -12,6 +14,12 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_application_1/globals.dart' as globals;
 
 import 'game_logic.dart';
+
+final languages = [
+  "ar",
+  "cn",
+  "hi"
+];
 
 void main() {
   runApp(const MyApp());
@@ -65,13 +73,14 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
 
   bool isDarkMode = globals.darkModeEnabled;
 
-  Artboard? _riveArtboardMenu;
+  List<Artboard>? _riveArtboardMenu = [];
   Artboard? _riveArtboardBackground;
   StateMachineController? _controller;
   SMIInput<double>? _actionInput;
   SMIInput<double>? _darkModeInput;
 
   Timer? _timer;
+  var pages;
 
   @override
   void initState() {
@@ -90,152 +99,78 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
       }
     });
 
-    // Load the animation file from the bundle, note that you could also
-    // download this. The RiveFile just expects a list of bytes.
-    rootBundle.load('assets/menu.riv').then(
-          (data) async {
+    for (int i = 0; i < languages.length; i++) {
+      String lang = languages[i];
+      rootBundle.load('assets/menu/' + lang + '.riv').then((data) async {
         // Load the RiveFile from the binary data.
         final file = RiveFile.import(data);
 
         // The artboard is the root of the animation and gets drawn in the
         // Rive widget.
         final artboard = file.mainArtboard;
-        var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
-        if (controller != null) {
-          artboard.addController(controller);
-          _actionInput = controller.findInput('action');
-        }
-        setState(() => _riveArtboardMenu = artboard);
-      },
-    );
-
-    rootBundle.load('assets/background.riv').then(
-          (data) async {
-        // Load the RiveFile from the binary data.
-        final file = RiveFile.import(data);
-
-        // The artboard is the root of the animation and gets drawn in the
-        // Rive widget.
-        final artboard = file.mainArtboard;
-        var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
-        if (controller != null) {
-          artboard.addController(controller);
-          _darkModeInput = controller.findInput('Number 1');
-        }
-        if(isDarkMode) {
-          _darkModeInput?.value = 1;
-        } else {
-          _darkModeInput?.value = 0;
-        }
-        setState(() => _riveArtboardBackground = artboard);
-      },
-    );
-  }
-
-  /*
-  Widget buildMenuGraphics(double dimension) {
-    int extraTopPadding = (Platform.isLinux || kIsWeb) ? 0 : 100;
-    return Padding(
-        padding: EdgeInsets.only(left: 0, top: dimension * 0.1 + extraTopPadding.toDouble(), bottom: 0, right: 0),
-        child: Container(
-                  height: dimension,
-                  width: dimension,
-                  child: Rive(
-                    artboard: _riveArtboardMenu!,
-                  )
-        )
-    );
-  }
-
-  double calculate_top(int index, double screenDimension, double width, double height, int extraTopPadding) {
-    if (width / height > 0.98) {
-      return index * screenDimension * 0.18 + screenDimension * 0.31 + extraTopPadding;
+        var controller = SimpleAnimation('idle');
+        artboard.addController(controller);
+        setState(() => _riveArtboardMenu = [..._riveArtboardMenu!, artboard]);
+      });
     }
-    else if (width / height > 0.927) {
-      return index * screenDimension * 0.19 + screenDimension * 0.32 + extraTopPadding;
-    }
-    else {
-      return index * screenDimension * 0.2 + screenDimension * 0.34 + extraTopPadding;
-    }
-  }
 
-  double calculate_height(double screenDimension, double width, double height) {
-      return screenDimension * 0.12;
-  }
+    rootBundle.load('assets/background.riv').then((data) async {
+      // Load the RiveFile from the binary data.
+      final file = RiveFile.import(data);
 
-  Widget buildMenuGesture(double screenDimension, double width, double height) {
-    int extraTopPadding = (Platform.isLinux || kIsWeb) ? 0 : 100;
-    List<Widget> stackLayers = List<Widget>.generate(3, (index) {
-      return Padding(
-        padding: EdgeInsets.only(left: screenDimension * 0.29,
-            top: calculate_top(index, screenDimension, width, height, extraTopPadding),
-            bottom: 0,
-            right: 0),
-        child:
-        MouseRegion(
-          onEnter: (_) {
-            _actionInput?.value = index + 1;
-          },
-          onExit: (_) {
-            _actionInput?.value = 0;
-          },
-          child:
-          GestureDetector(
-            onTapDown: (_) {
-              if (index == 0) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const Puzzle(lang: 'ar')),
-                );
-              } else if (index == 1) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const Puzzle(lang: 'cn')),
-                );
-              } else if (index == 2) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const Puzzle(lang: 'hi')),
-                );
-              }
-            },
-            onTapCancel: () {
-            },
-            onTapUp: (_) {
-            },
-            child:
-            Opacity(
-              opacity: 0,
-              child: Container(
-                height: calculate_height(screenDimension, width, height),
-                width: screenDimension * 0.42,
-                color: Colors.pink,
-              ),
-            ),
-          ),
-        ),
-      );
+      // The artboard is the root of the animation and gets drawn in the
+      // Rive widget.
+      final artboard = file.mainArtboard;
+      var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
+      if (controller != null) {
+        artboard.addController(controller);
+        _darkModeInput = controller.findInput('Number 1');
+      }
+      if(isDarkMode) {
+        _darkModeInput?.value = 1;
+      } else {
+        _darkModeInput?.value = 0;
+      }
+      setState(() => _riveArtboardBackground = artboard);
     });
-
-    return Stack(children:stackLayers);
   }
 
-  Widget buildMenu(double width, double height){
-    //Calculate tile dimensions
-    double dimensionLimit = min(width, height);
+  final page_controller = PageController(
+    viewportFraction: 0.8,
+    keepPage: true,
+    initialPage: 0,
+  );
 
-    return Stack(children:
-    [
-      buildMenuGraphics(dimensionLimit),
-      buildMenuGesture(dimensionLimit, width, height),
-    ]);
+  bool pageIsScrolling = false;
+
+  void _onScroll(double offset) {
+    if (pageIsScrolling == false) {
+      pageIsScrolling = true;
+      if (offset > 0) {
+        page_controller
+            .nextPage(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut)
+            .then((value) => pageIsScrolling = false);
+
+        _riveArtboardMenu![(page_controller.page! % pages.length).toInt()]
+            .addController(SimpleAnimation('idle'));
+        _riveArtboardMenu![((page_controller.page! + 1) % pages.length).toInt()]
+            .addController(SimpleAnimation('hover'));
+      } else {
+        page_controller
+            .previousPage(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut)
+            .then((value) => pageIsScrolling = false);
+
+        _riveArtboardMenu![(page_controller.page! % pages.length).toInt()]
+            .addController(SimpleAnimation('idle'));
+        _riveArtboardMenu![((page_controller.page! - 1) % pages.length).toInt()]
+            .addController(SimpleAnimation('hover'));
+      }
+    }
   }
-  */
-
-  final controller = PageController(viewportFraction: 0.8, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
@@ -253,25 +188,22 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
       extraTopPadding = 0;
     }
 
-
-
-    final pages = List.generate(6, (index) =>
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: Colors.white30,
-          ),
-          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          child: Container(
-            height: 280,
-            child: Center(
-              child: Text(
-                "Page $index",
-                style: TextStyle(color: Colors.indigo),
-              ),
-            ),
+    pages = List.generate(languages.length, (index) =>
+      Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.white30,
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        child: Container(
+          height: 280,
+          child: Center(
+            child: (_riveArtboardMenu!.length != languages.length) ?
+            SizedBox() :
+            Rive(artboard: _riveArtboardMenu![index]),
           ),
         ),
+      ),
     );
 
     return Scaffold(
@@ -315,21 +247,68 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
                   Padding(
                     padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.25 + extraTopPadding),
                   ),
-                  SizedBox(
-                    height: min(screenWidth, screenHeight) * 0.6,
-                    child: PageView.builder(
-                      controller: controller,
-                      // itemCount: pages.length,
-                      itemBuilder: (_, index) {
-                        return pages[index % pages.length];
+                                    MouseRegion(
+                    onEnter: (_) {
+                      _riveArtboardMenu![(page_controller.page! % pages.length).toInt()].addController(SimpleAnimation('hover'));
+                    },
+                    onExit: (_) {
+                      _riveArtboardMenu![(page_controller.page! % pages.length).toInt()].addController(SimpleAnimation('idle'));
+                    },
+                    child: GestureDetector(
+                      // to detect swipe
+                      onPanUpdate: (details) {
+                        _onScroll(details.delta.dy * -1);
                       },
+                      onTapDown: (_) {
+                        // chooose level
+                        int index = (page_controller.page! % pages.length).toInt();
+
+                        if (index == 0) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LevelPicker(lang: 'ar')),
+                          );
+                        } else if (index == 1) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LevelPicker(lang: 'cn')),
+                          );
+                        } else if (index == 2) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LevelPicker(lang: 'hi')),
+                          );
+                        }
+                       },
+                      child: Listener(
+                        // to detect scroll
+                        onPointerSignal: (pointerSignal) {
+                          if (pointerSignal is PointerScrollEvent) {
+                            _onScroll(pointerSignal.scrollDelta.dy);
+                          }
+                        },
+                        child: SizedBox(
+                          height: min(screenWidth, screenHeight) * 0.6,
+                          child: PageView.builder(
+                            controller: page_controller,
+                            // itemCount: pages.length,
+                            itemBuilder: (_, index) {
+                              return pages[index % pages.length];
+                            },
+                            physics: NeverScrollableScrollPhysics(),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 12),
                   ),
                   SmoothPageIndicator(
-                    controller: controller,
+                    controller: page_controller,
                     count: pages.length,
                     effect: ScrollingDotsEffect(
                       activeStrokeWidth: 2.6,
@@ -340,30 +319,12 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
                       dotHeight: 12,
                       dotWidth: 12,
                     ),
-                    onDotClicked: (index){
-                      print("onDotClicked = " + index.toString());
-                    }
                   ),
                 ],
               ),
             ),
-
-            /*
-            Center(
-              child: _riveArtboardMenu == null
-                  ? const SizedBox()
-                  : Column(
-                children: [
-                  Expanded(
-                    child: buildMenu(screenWidth, screenHeight),
-                  ),
-                ],
-              ),
-            ),
-            */
           ],
         )
-
     );
   }
 

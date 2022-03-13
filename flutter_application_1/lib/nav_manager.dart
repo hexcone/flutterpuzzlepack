@@ -287,17 +287,6 @@ class _NavState extends State<NavWidget> {
             ),
             Row(
               children: [
-                Container(
-                  child: FittedBox(
-                    fit: BoxFit.fitWidth, child: Text(
-                    'Difficulty: ' + globals.difficulty.toString() + "     ",
-                    style: GoogleFonts.pacifico(
-                      color: globals.darkModeEnabled ? Colors.white : Colors.black,
-                      fontSize: 24
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                )),
                 _riveArtboardDarkMode == null
                     ? const SizedBox()
                     : MouseRegion(
