@@ -235,8 +235,8 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
                       'Count to 15 in another language!',
                       style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
                     ),
-                  )
-                )
+                  ),
+                ),
               ],
             ),
 
@@ -324,7 +324,7 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
               ),
             ),
           ],
-        )
+        ),
     );
   }
 
