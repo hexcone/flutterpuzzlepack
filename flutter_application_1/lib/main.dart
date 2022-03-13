@@ -247,7 +247,7 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
                   Padding(
                     padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.25 + extraTopPadding),
                   ),
-                                    MouseRegion(
+                  MouseRegion(
                     onEnter: (_) {
                       _riveArtboardMenu![(page_controller.page! % pages.length).toInt()].addController(SimpleAnimation('hover'));
                     },

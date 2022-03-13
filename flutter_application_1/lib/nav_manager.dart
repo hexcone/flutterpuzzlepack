@@ -45,6 +45,7 @@ class _NavState extends State<NavWidget> {
   SMIInput<bool>? _darkModeInput;
   SMIInput<bool>? _audioInput;
   SMIInput<bool>? _hoverInput;
+  SMIInput<bool>? _darkModeInput_Audio;
 
   int currentDifficulty = globals.difficulty;
   bool isDarkMode = globals.darkModeEnabled;
@@ -78,7 +79,9 @@ class _NavState extends State<NavWidget> {
         // The artboard is the root of the animation and gets drawn in the
         // Rive widget.
         final artboard = file.mainArtboard;
-        var controller = SimpleAnimation('Animation 1');
+        var controller = globals.darkModeEnabled ?
+          SimpleAnimation('Animation 1_dark') :
+          SimpleAnimation('Animation 1');
         if (controller != null) {
           artboard.addController(controller);
         }
@@ -95,8 +98,9 @@ class _NavState extends State<NavWidget> {
         // The artboard is the root of the animation and gets drawn in the
         // Rive widget.
         final artboard = file.mainArtboard;
-        var controller;
-        artboard.addController(controller = SimpleAnimation('idle'));
+        artboard.addController(globals.darkModeEnabled ?
+          SimpleAnimation('idle_dark') :
+          SimpleAnimation('idle'));
         setState(() => _riveArtboardHome = artboard);
       },
     );
@@ -122,11 +126,18 @@ class _NavState extends State<NavWidget> {
           artboard.addController(controller);
           _audioInput = controller.findInput('audio');
           _hoverInput = controller.findInput('hover');
+          _darkModeInput_Audio = controller.findInput('dark');
         }
         if (globals.audioEnabled) {
           _audioInput?.value = true;
         } else {
           _audioInput?.value = false;
+        }
+        _hoverInput?.value = false;
+        if (globals.darkModeEnabled) {
+          _darkModeInput_Audio?.value = true;
+        } else {
+          _darkModeInput_Audio?.value = false;
         }
         setState(() => _riveArtboardAudio = artboard);
       },
@@ -232,10 +243,14 @@ class _NavState extends State<NavWidget> {
                       ? const SizedBox()
                       : MouseRegion(
                     onEnter: (_) {
-                      _riveArtboardHome!.addController(SimpleAnimation('active'));
+                      globals.darkModeEnabled ?
+                        _riveArtboardHome!.addController(SimpleAnimation('active_dark')) :
+                        _riveArtboardHome!.addController(SimpleAnimation('active'));
                     },
                     onExit: (_) {
-                      _riveArtboardHome!.addController(SimpleAnimation('idle'));
+                      globals.darkModeEnabled ?
+                        _riveArtboardHome!.addController(SimpleAnimation('idle_dark')) :
+                        _riveArtboardHome!.addController(SimpleAnimation('idle'));
                     },
                     child: GestureDetector(
                       onTapDown: (_) {
@@ -273,6 +288,10 @@ class _NavState extends State<NavWidget> {
                         } else{
                           _audioPlayer.setVolume(0);
                         }
+                        globals.darkModeEnabled ?
+                          _darkModeInput_Audio?.value = true :
+                          _darkModeInput_Audio?.value = false;
+
                       },
                       child: SizedBox(
                         width: 64,
@@ -294,6 +313,18 @@ class _NavState extends State<NavWidget> {
                     onTapDown: (_) {
                       globals.darkModeEnabled = !globals.darkModeEnabled;
                       _darkModeInput?.value = globals.darkModeEnabled;
+
+                      _riveArtboardLogo?.addController(globals.darkModeEnabled ?
+                      SimpleAnimation('Animation 1_dark') :
+                      SimpleAnimation('Animation 1'));
+
+                      _riveArtboardHome?.addController(globals.darkModeEnabled ?
+                      SimpleAnimation('idle_dark') :
+                      SimpleAnimation('idle'));
+
+                      globals.darkModeEnabled ?
+                      _darkModeInput_Audio?.value = true :
+                      _darkModeInput_Audio?.value = false;
                     },
                     child: SizedBox(
                       width: 96,
