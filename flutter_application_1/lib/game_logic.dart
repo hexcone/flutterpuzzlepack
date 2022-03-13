@@ -73,6 +73,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
   int animationRNG = 0;
   Timer? _animationTimer;
 
+  FocusNode focusNode = FocusNode(); 
 
   @override
   void initState() {
@@ -335,6 +336,77 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
     
   }
 
+  void tapLogic(int index) {
+    if (gestureEnabled) {
+      if(globals.audioEnabled) {                  
+        
+        if(soundEffectPlayer.playing) {
+          soundEffectPlayer.pause();
+          soundEffectPlayer.seek(Duration.zero);
+        }
+        soundEffectPlayer.play();
+        
+      }
+      List<List<int>> animationPlaylist = gs.tap(index);
+      print("Click on GestureDetector: " + (index).toString());
+      print(animationPlaylist);
+      
+      gs.printBoard();
+      if(animationPlaylist.length > 0) {
+        gestureEnabled = false;
+      }
+      for(int i=0;i<animationPlaylist.length;i++) {
+          int affectedTileIndex = animationPlaylist[i][0];
+
+          // change the z-index
+          int value = 0;
+          (animationPlaylist[i][6] == 1)? value = 5 : value = -5;
+          setState(() {
+            gs.incZIndex(affectedTileIndex, value);
+          });
+          Future.delayed(Duration(milliseconds: 2000), () {
+            if (mounted) {
+              setState(() {
+                gs.incZIndex(affectedTileIndex, value);
+              });
+            }
+          });
+
+          setState(() {
+            _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
+            _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
+            _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
+            _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
+
+            if(gs.findIndexOfTile(affectedTileIndex + 1) == affectedTileIndex) {
+              _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
+            } else {
+              if(animationPlaylist[i][5] == 1) {
+                _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
+              }
+            }
+          });
+          
+      }
+      if(gs.isWinningState()) {
+        //Player won
+        //Show loading screen
+        loading = true;
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (BuildContext context, _, __) =>
+                WinScreen(gs: gs)));
+        
+        int newDifficulty = globals.difficulty+1;
+        StorageManager.saveDifficulty(newDifficulty);
+        setState(() {
+          globals.difficulty = newDifficulty;
+        });   
+      }
+    }
+  }
+ 
   Widget buildGestureDetectorTile(double tileDimension, int index){
     return 
     Padding(
@@ -351,75 +423,8 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
           },
           child:
           GestureDetector(
-            onTapDown: (_) {
-              if (gestureEnabled) {
-                if(globals.audioEnabled) {                  
-                  
-                  if(soundEffectPlayer.playing) {
-                    soundEffectPlayer.pause();
-                    soundEffectPlayer.seek(Duration.zero);
-                  }
-                  soundEffectPlayer.play();
-                  
-                }
-                List<List<int>> animationPlaylist = gs.tap(index);
-                print("Click on GestureDetector: " + (index).toString());
-                print(animationPlaylist);
-                
-                gs.printBoard();
-                if(animationPlaylist.length > 0) {
-                  gestureEnabled = false;
-                }
-                for(int i=0;i<animationPlaylist.length;i++) {
-                    int affectedTileIndex = animationPlaylist[i][0];
-
-                    // change the z-index
-                    int value = 0;
-                    (animationPlaylist[i][6] == 1)? value = 5 : value = -5;
-                    setState(() {
-                      gs.incZIndex(affectedTileIndex, value);
-                    });
-                    Future.delayed(Duration(milliseconds: 2000), () {
-                      if (mounted) {
-                        setState(() {
-                          gs.incZIndex(affectedTileIndex, value);
-                        });
-                      }
-                    });
-
-                    setState(() {
-                      _indexes?[affectedTileIndex].value = animationPlaylist[i][1].toDouble();
-                      _rows?[affectedTileIndex].value = animationPlaylist[i][2] == 1 ? true : false;
-                      _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
-                      _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
-
-                      if(gs.findIndexOfTile(affectedTileIndex + 1) == affectedTileIndex) {
-                        _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
-                      } else {
-                        if(animationPlaylist[i][5] == 1) {
-                          _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
-                        }
-                      }
-                    });
-                    
-                }
-                if(gs.isWinningState()) {
-                  //Player won
-                  //Show loading screen
-                  loading = true;
-                  Navigator.of(context).push(
-                    PageRouteBuilder(
-                      opaque: false,
-                      pageBuilder: (BuildContext context, _, __) =>
-                          WinScreen(gs: gs)));
-                  
-                  int newDifficulty = globals.difficulty+1;
-                  StorageManager.saveDifficulty(newDifficulty);
-                  setState(() {
-                    globals.difficulty = newDifficulty;
-                  });   
-                }
-              }
+            onTapDown: (_) { 
+              tapLogic(index);
             },
             child:
             Opacity(
@@ -520,15 +525,46 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
       }
     });
 
-    return WillPopScope(
+    FocusScope.of(context).requestFocus(focusNode);
+    return RawKeyboardListener(
+          autofocus: true,
+          focusNode: focusNode,   // <-- more magic
+          onKey: (RawKeyEvent event) {
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowDown) {
+              int tileAbove = gs.getTileAbove(16);
+              if(tileAbove != -1) {
+                tapLogic(gs.findIndexOfTile(tileAbove));
+              }
+              print("down");
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowLeft) {
+              int tileRight = gs.getTileRight(16);
+              if(tileRight != -1) {
+                tapLogic(gs.findIndexOfTile(tileRight));
+              }
+              print("left");
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowRight) {
+              
+              int tileLeft = gs.getTileLeft(16);
+              if(tileLeft != -1) {
+                tapLogic(gs.findIndexOfTile(tileLeft));
+              }
+              print("right");
+            }
+            if (event.data.logicalKey == LogicalKeyboardKey.arrowUp) {
+               
+              int tileBelow = gs.getTileBelow(16);
+              if(tileBelow != -1) {
+                tapLogic(gs.findIndexOfTile(tileBelow));
+              }
+              print("up");
+            }
+          },
+          child: WillPopScope(
             onWillPop: () => showExitPopup(context),
             child: Scaffold(
               backgroundColor: Colors.white,
-              /*
-              appBar: AppBar(
-                title: const Text('Puzzle'),
-              ),
-              */
                 body: Stack(
                   children: [
                     _riveArtboardBackground == null
@@ -554,7 +590,8 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
                   ],
                 )
             )
-          );
+          )
+    );
   }
 
   @override
