@@ -428,7 +428,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
             },
             child:
             Opacity(
-              opacity: 0.3,
+              opacity: 0.0,
               child: Container(
                 height: tileDimension/4,
                 width: tileDimension/4,

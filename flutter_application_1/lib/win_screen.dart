@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/game_state.dart';
+import 'package:get/get.dart';
 import 'package:rive/rive.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -56,8 +57,7 @@ class _WinScreenState extends State<WinScreen> {
         child: 
           GestureDetector(
             onTapDown: (_) {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Get.toNamed("/");
             },
             child:
               Scaffold(
