@@ -153,9 +153,9 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
             curve: Curves.easeInOut)
             .then((value) => pageIsScrolling = false);
 
-        _riveArtboardMenu![(page_controller.page! % pages.length).toInt()]
+        _riveArtboardMenu?[(page_controller.page! % pages.length).toInt()]
             .addController(SimpleAnimation('idle'));
-        _riveArtboardMenu![((page_controller.page! + 1) % pages.length).toInt()]
+        _riveArtboardMenu?[((page_controller.page! + 1) % pages.length).toInt()]
             .addController(SimpleAnimation('hover'));
       } else {
         page_controller
@@ -164,9 +164,9 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
             curve: Curves.easeInOut)
             .then((value) => pageIsScrolling = false);
 
-        _riveArtboardMenu![(page_controller.page! % pages.length).toInt()]
+        _riveArtboardMenu?[(page_controller.page! % pages.length).toInt()]
             .addController(SimpleAnimation('idle'));
-        _riveArtboardMenu![((page_controller.page! - 1) % pages.length).toInt()]
+        _riveArtboardMenu?[((page_controller.page! - 1) % pages.length).toInt()]
             .addController(SimpleAnimation('hover'));
       }
     }
@@ -198,7 +198,7 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
         child: Container(
           height: 280,
           child: Center(
-            child: (_riveArtboardMenu!.length != languages.length) ?
+            child: ((_riveArtboardMenu == null) || (_riveArtboardMenu?.length != languages.length)) ?
             SizedBox() :
             Rive(artboard: _riveArtboardMenu![index]),
           ),
