@@ -172,10 +172,10 @@ class _LevelPickerState extends State<LevelPicker> {
                     children: [
                       MouseRegion(
                         onEnter: (_) {
-                          _riveArtboardEasy!.addController(SimpleAnimation('hover'));
+                          _riveArtboardEasy?.addController(SimpleAnimation('hover'));
                         },
                         onExit: (_) {
-                          _riveArtboardEasy!.addController(SimpleAnimation('idle'));
+                          _riveArtboardEasy?.addController(SimpleAnimation('idle'));
                         },
                         child: GestureDetector(
                           onTapDown: (_) {
@@ -216,10 +216,10 @@ class _LevelPickerState extends State<LevelPicker> {
                     children: [
                       MouseRegion(
                         onEnter: (_) {
-                          _riveArtboardMedium!.addController(SimpleAnimation('hover'));
+                          _riveArtboardMedium?.addController(SimpleAnimation('hover'));
                         },
                         onExit: (_) {
-                          _riveArtboardMedium!.addController(SimpleAnimation('idle'));
+                          _riveArtboardMedium?.addController(SimpleAnimation('idle'));
                         },
                         child: GestureDetector(
                           onTapDown: (_) {
@@ -260,10 +260,10 @@ class _LevelPickerState extends State<LevelPicker> {
                     children: [
                       MouseRegion(
                         onEnter: (_) {
-                          _riveArtboardHard!.addController(SimpleAnimation('hover'));
+                          _riveArtboardHard?.addController(SimpleAnimation('hover'));
                         },
                         onExit: (_) {
-                          _riveArtboardHard!.addController(SimpleAnimation('idle'));
+                          _riveArtboardHard?.addController(SimpleAnimation('idle'));
                         },
                         child: GestureDetector(
                           onTapDown: (_) {
