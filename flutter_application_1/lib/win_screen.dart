@@ -57,7 +57,9 @@ class _WinScreenState extends State<WinScreen> {
         child: 
           GestureDetector(
             onTapDown: (_) {
-              Get.toNamed("/");
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
             },
             child:
               Scaffold(
