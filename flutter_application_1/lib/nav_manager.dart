@@ -219,20 +219,17 @@ class _NavState extends State<NavWidget> {
                         middleText: getCreditsString()
                       );
                     },
-                    child: GestureDetector(
-                      onTapDown: (_) {
-                        showExitPopup(Get.context, true);
-                      },
-                      child: SizedBox(
-                        width: 64,
-                        height: 64,
-                        child: Rive(
-                          artboard: _riveArtboardHome!,
+                    child: _riveArtboardLogo == null
+                        ? const SizedBox()
+                        : Container(
+                      child: Rive(
+                        fit: BoxFit.contain,
+                        artboard: _riveArtboardLogo!,
                         ),
                       ),
                     ),
                   ),
-                ),
+                
                 _riveArtboardHome == null
                     ? const SizedBox()
                     : MouseRegion(

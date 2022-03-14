@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
     
 
     return MaterialApp(
-      title: 'Language Tiles - Learn to count to 15 in different languages!',
+      title: 'Hash - Learn to count to 15 in different languages!',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const LanguageTilesStateMachine(title: 'Language Tiles - Learn to count to 15 in different languages!'),
+      home: const LanguageTilesStateMachine(title: 'Hash - Learn to count to 15 in different languages!'),
       builder: (context, child) => NavManager(child: child!),
       navigatorKey: Get.key,
       initialRoute: "/",
