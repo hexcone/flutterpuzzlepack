@@ -480,7 +480,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
       }
     });
 
-    Future.delayed(Duration(milliseconds: 1000),() {
+    Future.delayed(Duration(milliseconds: 200),() {
       if(!shuffled && mounted) {
         //some action on complete
         List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(globals.difficulty);
@@ -499,7 +499,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
           }
           
         });
-        Future.delayed(Duration(milliseconds: 2000),() {
+        Future.delayed(Duration(milliseconds: 1000),() {
           if(mounted) {
             setState(() {
               for(int i=0;i<shuffleAnimationPlaylist[1].length;i++) {
@@ -563,7 +563,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
             }
           },
           child: WillPopScope(
-            onWillPop: () => showExitPopup(context),
+            onWillPop: () => showExitPopup(context, false),
             child: Scaffold(
               backgroundColor: Colors.white,
                 body: Stack(

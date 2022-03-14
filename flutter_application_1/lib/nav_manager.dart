@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/exit_popup.dart';
 import 'package:flutter_application_1/storage_manager.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_application_1/globals.dart' as globals;
@@ -254,8 +255,7 @@ class _NavState extends State<NavWidget> {
                     },
                     child: GestureDetector(
                       onTapDown: (_) {
-                        Get.offAllNamed("/");
-                        
+                        showExitPopup(Get.context, true);
                       },
                       child: SizedBox(
                         width: 64,
