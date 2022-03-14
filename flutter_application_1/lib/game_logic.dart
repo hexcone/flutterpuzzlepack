@@ -451,7 +451,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
       }
     });
 
-    Future.delayed(Duration(milliseconds: 500),() {
+    Future.delayed(Duration(milliseconds: 1000),() {
       if (!shuffled && mounted) {
         //some action on complete
         List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(globals.difficulty);
@@ -468,7 +468,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
           }
           
         });
-        Future.delayed(Duration(milliseconds: 1500),() {
+        Future.delayed(Duration(milliseconds: 2000),() {
           if (mounted) {
             setState(() {
               for (int i = 0; i < shuffleAnimationPlaylist[1].length; i++) {
@@ -480,10 +480,16 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
                   _moves?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][4] == 1 ? true : false;
                 
               }
+            });
+          }
+         });
+        Future.delayed(Duration(milliseconds: 3000),() {
+          if (mounted) {
+            setState(() {
 
               for (int i = 0; i < _riveArtboard!.length; i++) {
                 if (gs.findIndexOfTile(i + 1) == i) {
-                  _riveArtboard![i].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
+                  _riveArtboard![i].addController(SimpleAnimation('Enter Correct Position'));
                 }
               }
               
