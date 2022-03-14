@@ -490,6 +490,10 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
               for (int i = 0; i < _riveArtboard!.length; i++) {
                 if (gs.findIndexOfTile(i + 1) == i) {
                   _riveArtboard![i].addController(SimpleAnimation('Enter Correct Position'));
+                } else {
+
+                   _riveArtboard![i].addController(SimpleAnimation('Exit Correct Position'));
+
                 }
               }
               
