@@ -249,11 +249,11 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
                   ),
                   MouseRegion(
                     onEnter: (_) {
-                      if ((_riveArtboardMenu != null) && (page_controller.page != null) && (pages.length > 0))
+                      if ((_riveArtboardMenu != null) && _riveArtboardMenu!.isNotEmpty && (page_controller.page != null) && (pages.length > 0))
                         _riveArtboardMenu![(page_controller.page! % pages.length).toInt()].addController(SimpleAnimation('hover'));
                     },
                     onExit: (_) {
-                      if ((_riveArtboardMenu != null) && (page_controller.page != null) && (pages.length > 0))
+                      if ((_riveArtboardMenu != null) && _riveArtboardMenu!.isNotEmpty && (page_controller.page != null) && (pages.length > 0))
                         _riveArtboardMenu![(page_controller.page! % pages.length).toInt()].addController(SimpleAnimation('idle'));
                     },
                     child: GestureDetector(
