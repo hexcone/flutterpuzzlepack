@@ -259,7 +259,10 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
                     child: GestureDetector(
                       // to detect swipe
                       onPanUpdate: (details) {
-                        _onScroll(details.delta.dy * -1);
+                        if(details.delta.dx > 0)
+                          _onScroll(-20.0);
+                        else
+                          _onScroll(20.0);
                       },
                       onTapDown: (_) {
                         // chooose level
