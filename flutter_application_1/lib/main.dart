@@ -13,8 +13,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_application_1/globals.dart' as globals;
 
-import 'game_logic.dart';
-
 final languages = [
   "ar",
   "cn",
@@ -76,7 +74,6 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
   List<Artboard>? _riveArtboardMenu = [];
   Artboard? _riveArtboardBackground;
   StateMachineController? _controller;
-  SMIInput<double>? _actionInput;
   SMIInput<double>? _darkModeInput;
 
   Timer? _timer;
@@ -88,9 +85,9 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
 
     _timer = Timer.periodic(new Duration(milliseconds: 500), (timer) {
       //force rebuild if not in sync with global values
-      if(globals.darkModeEnabled != isDarkMode){
+      if (globals.darkModeEnabled != isDarkMode) {
         isDarkMode = globals.darkModeEnabled;
-        if(isDarkMode) {
+        if (isDarkMode) {
           _darkModeInput?.value = 1;
         } else {
           _darkModeInput?.value = 0;
@@ -126,7 +123,7 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
         artboard.addController(controller);
         _darkModeInput = controller.findInput('Number 1');
       }
-      if(isDarkMode) {
+      if (isDarkMode) {
         _darkModeInput?.value = 1;
       } else {
         _darkModeInput?.value = 0;
@@ -148,26 +145,26 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
       pageIsScrolling = true;
       if (offset > 0) {
         page_controller
-            .nextPage(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut)
-            .then((value) => pageIsScrolling = false);
+          .nextPage(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut)
+          .then((value) => pageIsScrolling = false);
 
         _riveArtboardMenu?[(page_controller.page! % pages.length).toInt()]
-            .addController(SimpleAnimation('idle'));
+          .addController(SimpleAnimation('idle'));
         _riveArtboardMenu?[((page_controller.page! + 1) % pages.length).toInt()]
-            .addController(SimpleAnimation('hover'));
+          .addController(SimpleAnimation('hover'));
       } else {
         page_controller
-            .previousPage(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut)
-            .then((value) => pageIsScrolling = false);
+          .previousPage(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut)
+          .then((value) => pageIsScrolling = false);
 
         _riveArtboardMenu?[(page_controller.page! % pages.length).toInt()]
-            .addController(SimpleAnimation('idle'));
+          .addController(SimpleAnimation('idle'));
         _riveArtboardMenu?[((page_controller.page! - 1) % pages.length).toInt()]
-            .addController(SimpleAnimation('hover'));
+          .addController(SimpleAnimation('hover'));
       }
     }
   }
@@ -208,11 +205,6 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
 
     return Scaffold(
         backgroundColor: Colors.white,
-        /*
-      appBar: AppBar(
-        title: const Text('Button State Machine'),
-      ),
-      */
         body: Stack(
           children: [
             _riveArtboardBackground == null
@@ -239,7 +231,6 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
                 ),
               ],
             ),
-
             SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -259,7 +250,7 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
                     child: GestureDetector(
                       // to detect swipe
                       onPanUpdate: (details) {
-                        if(details.delta.dx > 0)
+                        if (details.delta.dx > 0)
                           _onScroll(-20.0);
                         else
                           _onScroll(20.0);
@@ -272,19 +263,19 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const LevelPicker(lang: 'ar')),
+                              builder: (context) => const LevelPicker(lang: 'ar')),
                           );
                         } else if (index == 1) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const LevelPicker(lang: 'cn')),
+                              builder: (context) => const LevelPicker(lang: 'cn')),
                           );
                         } else if (index == 2) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const LevelPicker(lang: 'hi')),
+                              builder: (context) => const LevelPicker(lang: 'hi')),
                           );
                         }
                        },

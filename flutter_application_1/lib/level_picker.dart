@@ -4,9 +4,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_1/nav_manager.dart';
 import 'package:rive/rive.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_application_1/globals.dart' as globals;
 
@@ -25,7 +23,6 @@ class LevelPicker extends StatefulWidget {
 class _LevelPickerState extends State<LevelPicker> {
   bool isDarkMode = globals.darkModeEnabled;
 
-  StateMachineController? _controller;
   Artboard? _riveArtboardBackground;
   Artboard? _riveArtboardEasy;
   Artboard? _riveArtboardMedium;
@@ -42,9 +39,9 @@ class _LevelPickerState extends State<LevelPicker> {
 
     _timer = Timer.periodic(new Duration(milliseconds: 500), (timer) {
       //force rebuild if not in sync with global values
-      if(globals.darkModeEnabled != isDarkMode){
+      if (globals.darkModeEnabled != isDarkMode) {
         isDarkMode = globals.darkModeEnabled;
-        if(isDarkMode) {
+        if (isDarkMode) {
           _darkModeInput?.value = 1;
         } else {
           _darkModeInput?.value = 0;
@@ -65,7 +62,7 @@ class _LevelPickerState extends State<LevelPicker> {
         artboard.addController(controller);
         _darkModeInput = controller.findInput('Number 1');
       }
-      if(isDarkMode) {
+      if (isDarkMode) {
         _darkModeInput?.value = 1;
       } else {
         _darkModeInput?.value = 0;
@@ -116,7 +113,7 @@ class _LevelPickerState extends State<LevelPicker> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     int extraTopPadding = 0;
-    if (defaultTargetPlatform == TargetPlatform.android ||defaultTargetPlatform == TargetPlatform.windows) {
+    if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.windows) {
       extraTopPadding = 100;
     }
     else if (defaultTargetPlatform == TargetPlatform.linux || defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.iOS) {
@@ -130,18 +127,12 @@ class _LevelPickerState extends State<LevelPicker> {
     var container_padding_top = min(screenWidth, screenHeight) * 0.3 + extraTopPadding;
 
     return Scaffold(
-
         backgroundColor: Colors.white,
-        /*
-      appBar: AppBar(
-        title: const Text('Button State Machine'),
-      ),
-      */
         body: Stack(
           children: [
             _riveArtboardBackground == null
-                ? const SizedBox()
-                : Container(
+              ? const SizedBox()
+              : Container(
               child: Rive(
                 fit: BoxFit.cover,
                 artboard: _riveArtboardBackground!,
@@ -151,15 +142,15 @@ class _LevelPickerState extends State<LevelPicker> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container (
-                    width: min(screenWidth, screenHeight) * 0.6,
-                    padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.15 + extraTopPadding),
-                    child: FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Text(
-                        'Choose difficulty of game!',
-                        style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
-                      ),
-                    )
+                  width: min(screenWidth, screenHeight) * 0.6,
+                  padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.15 + extraTopPadding),
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      'Choose difficulty of game!',
+                      style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
+                    ),
+                  )
                 )
               ],
             ),
@@ -183,7 +174,7 @@ class _LevelPickerState extends State<LevelPicker> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Puzzle(lang: widget.lang)),
+                                builder: (context) => Puzzle(lang: widget.lang)),
                             );
                           },
                           child: Container(
@@ -241,15 +232,15 @@ class _LevelPickerState extends State<LevelPicker> {
                         ),
                       ),
                       Container (
-                          width: container_width * 0.5,
-                          //padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.15 + extraTopPadding),
-                          child: FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Text(
-                              'Medium',
-                              style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
-                            ),
-                          )
+                        width: container_width * 0.5,
+                        //padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.15 + extraTopPadding),
+                        child: FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Text(
+                            'Medium',
+                            style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
+                          ),
+                        )
                       ),
                     ],
                   ),
@@ -285,15 +276,14 @@ class _LevelPickerState extends State<LevelPicker> {
                         ),
                       ),
                       Container (
-                          width: container_width * 0.3,
-                          //padding: EdgeInsets.only(top: min(screenWidth, screenHeight) * 0.15 + extraTopPadding),
-                          child: FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Text(
-                              'Hard',
-                              style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
-                            ),
-                          )
+                        width: container_width * 0.3,
+                        child: FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Text(
+                            'Hard',
+                            style: globals.darkModeEnabled ? GoogleFonts.pacifico(color: Colors.white) : GoogleFonts.pacifico(color: Colors.black),
+                          ),
+                        )
                       ),
                     ],
                   ),

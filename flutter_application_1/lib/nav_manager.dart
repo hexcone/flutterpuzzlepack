@@ -56,7 +56,7 @@ class _NavState extends State<NavWidget> {
     super.initState();
 
     _timer = Timer.periodic(new Duration(milliseconds: 500), (timer) {
-        if(globals.difficulty != currentDifficulty || globals.darkModeEnabled != isDarkMode){
+        if (globals.difficulty != currentDifficulty || globals.darkModeEnabled != isDarkMode) {
           setState(() {
             /*force re-build if globals not in sync*/
             currentDifficulty = globals.difficulty;
@@ -70,42 +70,38 @@ class _NavState extends State<NavWidget> {
     StorageManager.readDifficulty().then((value) => globals.difficulty = value);
 
     // logo
-    rootBundle.load('assets/nav/logo.riv').then(
-          (data) async {
-        // Load the RiveFile from the binary data.
-        final file = RiveFile.import(data);
+    rootBundle.load('assets/nav/logo.riv').then((data) async {
+      // Load the RiveFile from the binary data.
+      final file = RiveFile.import(data);
 
-        // The artboard is the root of the animation and gets drawn in the
-        // Rive widget.
-        final artboard = file.mainArtboard;
-        var controller = globals.darkModeEnabled ?
-          SimpleAnimation('Animation 1_dark') :
-          SimpleAnimation('Animation 1');
-        if (controller != null) {
-          artboard.addController(controller);
-        }
-        setState(() => _riveArtboardLogo = artboard);
-      },
-    );
+      // The artboard is the root of the animation and gets drawn in the
+      // Rive widget.
+      final artboard = file.mainArtboard;
+      var controller = globals.darkModeEnabled ?
+        SimpleAnimation('Animation 1_dark') :
+        SimpleAnimation('Animation 1');
+      if (controller != null) {
+        artboard.addController(controller);
+      }
+      setState(() => _riveArtboardLogo = artboard);
+    });
 
     // home
-    rootBundle.load('assets/nav/home.riv').then(
-          (data) async {
-        // Load the RiveFile from the binary data.
-        final file = RiveFile.import(data);
+    rootBundle.load('assets/nav/home.riv').then((data) async {
+      // Load the RiveFile from the binary data.
+      final file = RiveFile.import(data);
 
-        // The artboard is the root of the animation and gets drawn in the
-        // Rive widget.
-        final artboard = file.mainArtboard;
-        artboard.addController(globals.darkModeEnabled ?
-          SimpleAnimation('idle_dark') :
-          SimpleAnimation('idle'));
-        setState(() => _riveArtboardHome = artboard);
-      },
-    );
+      // The artboard is the root of the animation and gets drawn in the
+      // Rive widget.
+      final artboard = file.mainArtboard;
+      artboard.addController(globals.darkModeEnabled ?
+        SimpleAnimation('idle_dark') :
+        SimpleAnimation('idle'));
+      setState(() => _riveArtboardHome = artboard);
+    });
 
     globals.audioEnabled = false;
-    if(!kIsWeb) {
+    if (!kIsWeb) {
       globals.audioEnabled = true;
     }
     _initAudioPlayer();
@@ -143,36 +139,33 @@ class _NavState extends State<NavWidget> {
     );
 
     // handle dark mode
-    rootBundle.load('assets/dark_light_mode.riv').then(
-          (data) async {
-        // Load the RiveFile from the binary data.
-        final file = RiveFile.import(data);
+    rootBundle.load('assets/dark_light_mode.riv').then((data) async {
+      // Load the RiveFile from the binary data.
+      final file = RiveFile.import(data);
 
-        // The artboard is the root of the animation and gets drawn in the
-        // Rive widget.
-        final artboard = file.mainArtboard;
-        var controller =
-        StateMachineController.fromArtboard(artboard, 'State Machine 1');
-        if (controller != null) {
-          artboard.addController(controller);
-          _darkModeInput = controller.findInput('dark_mode');
-        }
-        if (globals.darkModeEnabled) {
-          _darkModeInput?.value = true;
-        } else {
-          _darkModeInput?.value = false;
-        }
-        setState(() => _riveArtboardDarkMode = artboard);
-      },
-    );
-
+      // The artboard is the root of the animation and gets drawn in the
+      // Rive widget.
+      final artboard = file.mainArtboard;
+      var controller =
+      StateMachineController.fromArtboard(artboard, 'State Machine 1');
+      if (controller != null) {
+        artboard.addController(controller);
+        _darkModeInput = controller.findInput('dark_mode');
+      }
+      if (globals.darkModeEnabled) {
+        _darkModeInput?.value = true;
+      } else {
+        _darkModeInput?.value = false;
+      }
+      setState(() => _riveArtboardDarkMode = artboard);
+    });
   }
 
   void _initAudioPlayer() async {
     _audioPlayer = AudioPlayer();
     await _audioPlayer.setAsset("assets/audio/NatureSample.mp3");
     await _audioPlayer.setLoopMode(LoopMode.all);
-    if(globals.audioEnabled) {
+    if (globals.audioEnabled) {
       _audioPlayer.play();
     }
   }
@@ -198,7 +191,7 @@ class _NavState extends State<NavWidget> {
     credits.add("Difficulty level icon - https://dribbble.com/shots/2644775-Difficulty-Level-Selection-Interface");
 
     String ret = "";
-    for(int i=0;i<credits.length;i++){
+    for (int i = 0; i < credits.length; i++) {
       ret += credits[i] + "\n";
     }
     return ret;
@@ -214,96 +207,89 @@ class _NavState extends State<NavWidget> {
           children: [
             Row(
               children: <Widget>[
-                  Container(
-                    width: 64,
-                    height: 64,
-                    child: 
-                    GestureDetector(
-                      onTapDown: (_) {
-                        Get.defaultDialog(
-                          title: "Credits",
-                          middleText: getCreditsString(),
-                          //backgroundColor: Colors.green,
-                          //titleStyle: TextStyle(color: Colors.white),
-                          //middleTextStyle: TextStyle(color: Colors.white),
-
-                        );
-                      },
-                      child: _riveArtboardLogo == null
-                              ? const SizedBox()
-                              : Container(
-                            child: Rive(
-                              fit: BoxFit.contain,
-                              artboard: _riveArtboardLogo!,
-                            ),
-                          ),
-                    ),
-                  ),
-                  _riveArtboardHome == null
-                      ? const SizedBox()
-                      : MouseRegion(
-                    onEnter: (_) {
-                      globals.darkModeEnabled ?
-                        _riveArtboardHome!.addController(SimpleAnimation('active_dark')) :
-                        _riveArtboardHome!.addController(SimpleAnimation('active'));
+                Container(
+                  width: 64,
+                  height: 64,
+                  child:
+                  GestureDetector(
+                    onTapDown: (_) {
+                      Get.defaultDialog(
+                        title: "Credits",
+                        middleText: getCreditsString()
+                      );
                     },
-                    onExit: (_) {
-                      globals.darkModeEnabled ?
-                        _riveArtboardHome!.addController(SimpleAnimation('idle_dark')) :
-                        _riveArtboardHome!.addController(SimpleAnimation('idle'));
-                    },
-                    child: GestureDetector(
-                      onTapDown: (_) {
-                        Get.offAllNamed("/");
-                        
-                      },
-                      child: SizedBox(
-                        width: 64,
-                        height: 64,
-                        child: Rive(
-                          artboard: _riveArtboardHome!,
-                        ),
+                    child: _riveArtboardLogo == null
+                        ? const SizedBox()
+                        : Container(
+                      child: Rive(
+                        fit: BoxFit.contain,
+                        artboard: _riveArtboardLogo!,
                       ),
                     ),
                   ),
+                ),
+                _riveArtboardHome == null
+                    ? const SizedBox()
+                    : MouseRegion(
+                  onEnter: (_) {
+                    globals.darkModeEnabled ?
+                      _riveArtboardHome!.addController(SimpleAnimation('active_dark')) :
+                      _riveArtboardHome!.addController(SimpleAnimation('active'));
+                  },
+                  onExit: (_) {
+                    globals.darkModeEnabled ?
+                      _riveArtboardHome!.addController(SimpleAnimation('idle_dark')) :
+                      _riveArtboardHome!.addController(SimpleAnimation('idle'));
+                  },
+                  child: GestureDetector(
+                    onTapDown: (_) {
+                      Get.offAllNamed("/");
 
-                  
-                  _riveArtboardAudio == null
-                      ? const SizedBox()
-                      : MouseRegion(
-                    onEnter: (_) {
-                      _hoverInput?.value = true;
                     },
-                    onExit: (_) {
+                    child: SizedBox(
+                      width: 64,
+                      height: 64,
+                      child: Rive(
+                        artboard: _riveArtboardHome!,
+                      ),
+                    ),
+                  ),
+                ),
+                _riveArtboardAudio == null
+                    ? const SizedBox()
+                    : MouseRegion(
+                  onEnter: (_) {
+                    _hoverInput?.value = true;
+                  },
+                  onExit: (_) {
+                    _hoverInput?.value = false;
+                  },
+                  child: GestureDetector(
+                    onTapDown: (_) {
+                      globals.audioEnabled = !globals.audioEnabled;
                       _hoverInput?.value = false;
+                      _audioInput?.value = globals.audioEnabled;
+                      if (globals.audioEnabled) {
+                        if (!_audioPlayer.playing)
+                          _audioPlayer.play();
+                        _audioPlayer.setVolume(DEFAULT_VOLUME);
+                      } else{
+                        _audioPlayer.setVolume(0);
+                      }
+                      globals.darkModeEnabled ?
+                        _darkModeInput_Audio?.value = true :
+                        _darkModeInput_Audio?.value = false;
                     },
-                    child: GestureDetector(
-                      onTapDown: (_) {
-                        globals.audioEnabled = !globals.audioEnabled;
-                        _hoverInput?.value = false;
-                        _audioInput?.value = globals.audioEnabled;
-                        if (globals.audioEnabled) {
-                          if(!_audioPlayer.playing)
-                            _audioPlayer.play();
-                          _audioPlayer.setVolume(DEFAULT_VOLUME);
-                        } else{
-                          _audioPlayer.setVolume(0);
-                        }
-                        globals.darkModeEnabled ?
-                          _darkModeInput_Audio?.value = true :
-                          _darkModeInput_Audio?.value = false;
-
-                      },
-                      child: SizedBox(
-                        width: 64,
-                        height: 64,
-                        child: Rive(
-                          artboard: _riveArtboardAudio!,
-                        ),
+                    child: SizedBox(
+                      width: 64,
+                      height: 64,
+                      child: Rive(
+                        artboard: _riveArtboardAudio!,
                       ),
                     ),
                   ),
-                ],
+                ),
+              ],
             ),
             Row(
               children: [
@@ -344,7 +330,7 @@ class _NavState extends State<NavWidget> {
     
     double screenWidth = MediaQuery.of(context).size.width;
 
-    if(screenWidth < 455.0) {
+    if (screenWidth < 455.0) {
       return FittedBox(
         fit: BoxFit.contain,
         child: navbarContainer,

@@ -93,9 +93,9 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
 
     _globalTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       //force rebuild if not in sync with global values
-        if(globals.darkModeEnabled != isDarkMode){
+        if (globals.darkModeEnabled != isDarkMode) {
           isDarkMode = globals.darkModeEnabled;
-          if(isDarkMode) {
+          if (isDarkMode) {
             _darkModeInput?.value = 1;
           } else {
             _darkModeInput?.value = 0;
@@ -107,63 +107,55 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
 
     soundEffectPlayer.setAsset("assets/audio/ClickSample.wav");
 
-    rootBundle.load('assets/paratrooper.riv').then(
-          (data) async {
-        // Load the RiveFile from the binary data.
-        final file = RiveFile.import(data);
+    rootBundle.load('assets/paratrooper.riv').then((data) async {
+      // Load the RiveFile from the binary data.
+      final file = RiveFile.import(data);
 
-        // The artboard is the root of the animation and gets drawn in the
-        // Rive widget.
-        final artboard = file.mainArtboard;
-        var controller = SimpleAnimation('Animation 1');
+      // The artboard is the root of the animation and gets drawn in the
+      // Rive widget.
+      final artboard = file.mainArtboard;
+      var controller = SimpleAnimation('Animation 1');
+      artboard.addController(controller);
+      setState(() => _riveArtboardParatrooper = artboard);
+    });
+
+    rootBundle.load('assets/fishballoon.riv').then((data) async {
+      // Load the RiveFile from the binary data.
+      final file = RiveFile.import(data);
+
+      // The artboard is the root of the animation and gets drawn in the
+      // Rive widget.
+      final artboard = file.mainArtboard;
+      var controller = SimpleAnimation('Animation 1');
+      artboard.addController(controller);
+      setState(() => _riveArtboardFishBalloon = artboard);
+    });
+
+    rootBundle.load("assets/border.riv").then((data) async{
+      final file = RiveFile.import(data);
+      final artboard = file.mainArtboard;
+      setState(() => _boardBorder = artboard);
+    });
+
+    rootBundle.load('assets/background.riv').then((data) async {
+      // Load the RiveFile from the binary data.
+      final file = RiveFile.import(data);
+
+      // The artboard is the root of the animation and gets drawn in the
+      // Rive widget.
+      final artboard = file.mainArtboard;
+      var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
+      if (controller != null) {
         artboard.addController(controller);
-        setState(() => _riveArtboardParatrooper = artboard);
-      },
-    );
-
-    rootBundle.load('assets/fishballoon.riv').then(
-          (data) async {
-        // Load the RiveFile from the binary data.
-        final file = RiveFile.import(data);
-
-        // The artboard is the root of the animation and gets drawn in the
-        // Rive widget.
-        final artboard = file.mainArtboard;
-        var controller = SimpleAnimation('Animation 1');
-        artboard.addController(controller);
-        setState(() => _riveArtboardFishBalloon = artboard);
-      },
-    );
-
-    rootBundle.load("assets/border.riv").then(
-      (data) async{
-        final file = RiveFile.import(data);
-        final artboard = file.mainArtboard;
-        setState(() => _boardBorder = artboard);
+        _darkModeInput = controller.findInput('Number 1');
       }
-    );
-
-    rootBundle.load('assets/background.riv').then(
-          (data) async {
-        // Load the RiveFile from the binary data.
-        final file = RiveFile.import(data);
-
-        // The artboard is the root of the animation and gets drawn in the
-        // Rive widget.
-        final artboard = file.mainArtboard;
-        var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
-        if (controller != null) {
-          artboard.addController(controller);
-          _darkModeInput = controller.findInput('Number 1');
-        }
-        if(isDarkMode) {
-          _darkModeInput?.value = 1;
-        } else {
-          _darkModeInput?.value = 0;
-        }
-        setState(() => _riveArtboardBackground = artboard);
-      },
-    );
+      if (isDarkMode) {
+        _darkModeInput?.value = 1;
+      } else {
+        _darkModeInput?.value = 0;
+      }
+      setState(() => _riveArtboardBackground = artboard);
+    });
 
     final assets = [
       '/Tile_01.riv',
@@ -183,57 +175,52 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
       '/Tile_15.riv',
     ];
 
-    for(int i = 0; i < assets.length; i++) {
+    for (int i = 0; i < assets.length; i++) {
       // Load the animation file from the bundle, note that you could also
       // download this. The RiveFile just expects a list of bytes.
-      rootBundle.load("assets/" + widget.lang + assets[i]).then(
-        (data) async {
-          // Load the RiveFile from the binary data.
-          final file = RiveFile.import(data);
+      rootBundle.load("assets/" + widget.lang + assets[i]).then((data) async {
+        // Load the RiveFile from the binary data.
+        final file = RiveFile.import(data);
 
-          // The artboard is the root of the animation and gets drawn in the
-          // Rive widget.
-          final artboard = file.mainArtboard;
-          dynamic controller = StateMachineController.fromArtboard(
-            artboard,
-            'State Machine 1',
-            onStateChange: _onStateChange,
-          );
-          if (controller != null) {
-            artboard.addController(controller);
-            for (int k = 0 ; k<controller.inputs.length; k++) {
-              if(controller.inputs[k].name == "move") {
-                _moves?.add(controller.inputs[k]);
-              } else if (controller.inputs[k].name == "row") {
-                _rows?.add(controller.inputs[k]);
-              } else if (controller.inputs[k].name == "column") {
-                _columns?.add(controller.inputs[k]);
-              } else if (controller.inputs[k].name == "index") {
-                _indexes?.add(controller.inputs[k]);
-              }
+        // The artboard is the root of the animation and gets drawn in the
+        // Rive widget.
+        final artboard = file.mainArtboard;
+        dynamic controller = StateMachineController.fromArtboard(
+          artboard,
+          'State Machine 1',
+          onStateChange: _onStateChange,
+        );
+        if (controller != null) {
+          artboard.addController(controller);
+          for (int k = 0 ; k<controller.inputs.length; k++) {
+            if (controller.inputs[k].name == "move") {
+              _moves?.add(controller.inputs[k]);
+            } else if (controller.inputs[k].name == "row") {
+              _rows?.add(controller.inputs[k]);
+            } else if (controller.inputs[k].name == "column") {
+              _columns?.add(controller.inputs[k]);
+            } else if (controller.inputs[k].name == "index") {
+              _indexes?.add(controller.inputs[k]);
             }
           }
-          setState(() => _riveArtboard = [..._riveArtboard!, artboard]);
-        },
-      );
-
-      
-
+        }
+        setState(() => _riveArtboard = [..._riveArtboard!, artboard]);
+      });
     }
   }
 
   /// Do something when the state machine changes state
   void _onStateChange(String stateMachineName, String stateName) => setState(
-        () {
-          stateChangeMessage = 'State Changed in $stateMachineName to $stateName';
-          if (stateName == "Reset") {
-            gestureEnabled = true;
-          }
-        },
-      );
+    () {
+      stateChangeMessage = 'State Changed in $stateMachineName to $stateName';
+      if (stateName == "Reset") {
+        gestureEnabled = true;
+      }
+    },
+  );
 
   Widget buildTileGrid(double tileDimension, double screenWidth, double screenHeight) {
-    if (_riveArtboard?.length != 15){
+    if (_riveArtboard?.length != 15) {
       return SizedBox();
     }
     final items = [
@@ -260,7 +247,6 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
     List<Widget> gestureGrid= <Widget>[];
 
     stackLayers = List<Widget>.generate(items.length, (index) {
-
       gestureGrid.add( buildGestureDetectorTile(tileDimension, index));
 
       return Indexed(
@@ -278,9 +264,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
     });
 
     return Stack(children: [
-      
       Indexer(children: stackLayers),
-      
       Padding(
         padding: EdgeInsets.only(left: 0, top: extraTopPadding.toDouble(), bottom: 0, right: 0),
         child: Transform.scale(scale: 0.61, 
@@ -296,30 +280,29 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
       Align(
         alignment: Alignment.topLeft,
         child: SizedBox(
-                width: 100,
-                height: 100,
-                child: _riveArtboardParatrooper == null ? SizedBox() : Rive(artboard: _riveArtboardParatrooper!)
-              )
+          width: 100,
+          height: 100,
+          child: _riveArtboardParatrooper == null ? SizedBox() : Rive(artboard: _riveArtboardParatrooper!)
+        )
       );
     var paratrooperPath1 = [[-100.0, 0.0], [screenHeight, 0.0]];
     var paratrooperPath2 = [[-100.0, screenWidth / 4], [screenHeight, screenWidth / 4]];
     var paratrooperPath3 = [[-100.0, screenWidth / 1.5], [screenHeight, screenWidth / 1.5]];
 
-
     Widget fishBalloonWidget =
       Align(
         alignment: Alignment.topLeft,
         child: SizedBox(
-                width: 100,
-                height: 100,
-                child: _riveArtboardFishBalloon == null ? SizedBox() : Rive(artboard: _riveArtboardFishBalloon!)
-              )
+          width: 100,
+          height: 100,
+          child: _riveArtboardFishBalloon == null ? SizedBox() : Rive(artboard: _riveArtboardFishBalloon!)
+        )
       );
     var fishBaloonPath1 = [[0.0, -100.0], [0.0, screenWidth]];
     var fishBaloonPath2 = [[screenHeight / 4, -100.0], [screenHeight / 4, screenWidth]];
     var fishBaloonPath3 = [[screenHeight / 1.5, -100.0], [screenHeight / 1.5, screenWidth]];
 
-    switch(animationRNG){
+    switch (animationRNG) {
       case 0:
         return StaggerAnimation(controller: _animationController.view, animationWidget:paratroopWidget, animationPaths: paratrooperPath1);
       case 1:
@@ -333,29 +316,23 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
       default:
         return StaggerAnimation(controller: _animationController.view, animationWidget:fishBalloonWidget, animationPaths: fishBaloonPath3);
     }
-    
   }
 
   void tapLogic(int index) {
     if (gestureEnabled) {
-      if(globals.audioEnabled) {                  
-        
-        if(soundEffectPlayer.playing) {
+      if (globals.audioEnabled) {
+        if (soundEffectPlayer.playing) {
           soundEffectPlayer.pause();
           soundEffectPlayer.seek(Duration.zero);
         }
         soundEffectPlayer.play();
-        
       }
       List<List<int>> animationPlaylist = gs.tap(index);
-      print("Click on GestureDetector: " + (index).toString());
-      print(animationPlaylist);
-      
-      gs.printBoard();
-      if(animationPlaylist.length > 0) {
+
+      if (animationPlaylist.length > 0) {
         gestureEnabled = false;
       }
-      for(int i=0;i<animationPlaylist.length;i++) {
+      for (int i = 0; i < animationPlaylist.length; i++) {
           int affectedTileIndex = animationPlaylist[i][0];
 
           // change the z-index
@@ -378,17 +355,16 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
             _columns?[affectedTileIndex].value = animationPlaylist[i][3] == 1 ? true : false;
             _moves?[affectedTileIndex].value = animationPlaylist[i][4] == 1 ? true : false;
 
-            if(gs.findIndexOfTile(affectedTileIndex + 1) == affectedTileIndex) {
+            if (gs.findIndexOfTile(affectedTileIndex + 1) == affectedTileIndex) {
               _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
             } else {
-              if(animationPlaylist[i][5] == 1) {
+              if (animationPlaylist[i][5] == 1) {
                 _riveArtboard![affectedTileIndex].addController(_controller2 = SimpleAnimation('Exit Correct Position'));
               }
             }
           });
-          
       }
-      if(gs.isWinningState()) {
+      if (gs.isWinningState()) {
         //Player won
         //Show loading screen
         loading = true;
@@ -398,7 +374,7 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
             pageBuilder: (BuildContext context, _, __) =>
                 WinScreen(gs: gs)));
         
-        int newDifficulty = globals.difficulty+1;
+        int newDifficulty = globals.difficulty + 1;
         StorageManager.saveDifficulty(newDifficulty);
         setState(() {
           globals.difficulty = newDifficulty;
@@ -407,40 +383,39 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
     }
   }
  
-  Widget buildGestureDetectorTile(double tileDimension, int index){
-    return 
-    Padding(
+  Widget buildGestureDetectorTile(double tileDimension, int index) {
+    return Padding(
       padding: EdgeInsets.only(left: index%4 * tileDimension/4, top: index~/4 * tileDimension/4, bottom: 0, right: 0),
-        child: MouseRegion(
-          onEnter: (_) {
-            // handle hover animation
-            int affectedTileIndex = gs.hover(index);
-            if ((shuffled) && (affectedTileIndex > 0) && (affectedTileIndex < 16)) {
-              _riveArtboard![affectedTileIndex - 1].addController(_controller2 = SimpleAnimation('Hover'));
-            }
-          },
-          onExit: (_) {
+      child: MouseRegion(
+        onEnter: (_) {
+          // handle hover animation
+          int affectedTileIndex = gs.hover(index);
+          if ((shuffled) && (affectedTileIndex > 0) && (affectedTileIndex < 16)) {
+            _riveArtboard![affectedTileIndex - 1].addController(_controller2 = SimpleAnimation('Hover'));
+          }
+        },
+        onExit: (_) {
+        },
+        child:
+        GestureDetector(
+          onTapDown: (_) {
+            tapLogic(index);
           },
           child:
-          GestureDetector(
-            onTapDown: (_) { 
-              tapLogic(index);
-            },
-            child:
-            Opacity(
-              opacity: 0.0,
-              child: Container(
-                height: tileDimension/4,
-                width: tileDimension/4,
-                color: Colors.pink,
-              )
-            ),
+          Opacity(
+            opacity: 0.0,
+            child: Container(
+              height: tileDimension/4,
+              width: tileDimension/4,
+              color: Colors.pink,
+            )
           ),
         ),
-      );
+      ),
+    );
   }
 
-  Widget buildPlayGrid(double gridWidth, double gridHeight){
+  Widget buildPlayGrid(double gridWidth, double gridHeight) {
     //Calculate tile dimensions
     double dimensionLimit = min(gridWidth, gridHeight);
 
@@ -456,7 +431,6 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
       //await _animationController.reverse().orCancel;
     } on TickerCanceled {
       // the animation got canceled, probably because we were disposed
-      print("cancelled");
     }
   }
 
@@ -466,11 +440,8 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    //print("sw:" + screenWidth.toString());
-    //print("sh:" + screenHeight.toString());
-
     Future.delayed(Duration.zero, () {
-      if(!loading) {
+      if (!loading) {
         //Show loading screen
         loading = true;
         Navigator.of(context).push(PageRouteBuilder(
@@ -481,14 +452,12 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
     });
 
     Future.delayed(Duration(milliseconds: 1000),() {
-      if(!shuffled && mounted) {
+      if (!shuffled && mounted) {
         //some action on complete
         List<List<List<int>>> shuffleAnimationPlaylist = gs.shuffleBoard(globals.difficulty);
-        print(shuffleAnimationPlaylist);
-
 
         setState(() {
-          for(int i=0;i<shuffleAnimationPlaylist[0].length;i++) {
+          for (int i = 0; i < shuffleAnimationPlaylist[0].length; i++) {
             
               int affectedTileIndex = shuffleAnimationPlaylist[0][i][0];
               _indexes?[affectedTileIndex].value = shuffleAnimationPlaylist[0][i][1].toDouble();
@@ -500,9 +469,9 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
           
         });
         Future.delayed(Duration(milliseconds: 2000),() {
-          if(mounted) {
+          if (mounted) {
             setState(() {
-              for(int i=0;i<shuffleAnimationPlaylist[1].length;i++) {
+              for (int i = 0; i < shuffleAnimationPlaylist[1].length; i++) {
                 
                   int affectedTileIndex = shuffleAnimationPlaylist[1][i][0];
                   _indexes?[affectedTileIndex].value = shuffleAnimationPlaylist[1][i][1].toDouble();
@@ -512,8 +481,8 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
                 
               }
 
-              for(int i=0;i<_riveArtboard!.length;i++) {
-                if(gs.findIndexOfTile(i + 1) == i) {
+              for (int i = 0; i < _riveArtboard!.length; i++) {
+                if (gs.findIndexOfTile(i + 1) == i) {
                   _riveArtboard![i].addController(_controller2 = SimpleAnimation('Enter Correct Position'));
                 }
               }
@@ -533,33 +502,29 @@ class _PuzzleState extends State<Puzzle> with TickerProviderStateMixin {
           onKey: (RawKeyEvent event) {
             if (event.data.logicalKey == LogicalKeyboardKey.arrowDown) {
               int tileAbove = gs.getTileAbove(16);
-              if(tileAbove != -1) {
+              if (tileAbove != -1) {
                 tapLogic(gs.findIndexOfTile(tileAbove));
               }
-              print("down");
             }
             if (event.data.logicalKey == LogicalKeyboardKey.arrowLeft) {
               int tileRight = gs.getTileRight(16);
-              if(tileRight != -1) {
+              if (tileRight != -1) {
                 tapLogic(gs.findIndexOfTile(tileRight));
               }
-              print("left");
             }
             if (event.data.logicalKey == LogicalKeyboardKey.arrowRight) {
               
               int tileLeft = gs.getTileLeft(16);
-              if(tileLeft != -1) {
+              if (tileLeft != -1) {
                 tapLogic(gs.findIndexOfTile(tileLeft));
               }
-              print("right");
             }
             if (event.data.logicalKey == LogicalKeyboardKey.arrowUp) {
                
               int tileBelow = gs.getTileBelow(16);
-              if(tileBelow != -1) {
+              if (tileBelow != -1) {
                 tapLogic(gs.findIndexOfTile(tileBelow));
               }
-              print("up");
             }
           },
           child: WillPopScope(

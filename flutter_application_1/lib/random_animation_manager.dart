@@ -43,7 +43,6 @@ class StaggerAnimation extends StatelessWidget {
   Widget _buildAnimation(BuildContext context, Widget? child) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    //print("da: " + paddingAnimationSequence.value.top.toString());
         return 
           Positioned(
             top: topAnimationSequence.value,

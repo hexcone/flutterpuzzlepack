@@ -23,8 +23,7 @@ class GameState {
       10, // 13
       20,
       30,
-      40,
-      //100
+      40
     ];
     startTime = DateTime.now().millisecondsSinceEpoch;
   }
@@ -50,9 +49,9 @@ class GameState {
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
-  bool isWinningState(){
-    for(int i =0;i <boardArr.length;i++) {
-      if(boardArr[i] != i+1) {
+  bool isWinningState() {
+    for (int i = 0; i < boardArr.length; i++) {
+      if (boardArr[i] != i+1) {
         return false;
       }
     }
@@ -71,8 +70,7 @@ class GameState {
 
     int tile = tileNum == -1 ? boardArr[gestureDetectorIndex] : tileNum;
 
-    //return [[tile-1, 2, 1, 0, 1]];
-    if(tile == 16) {
+    if (tile == 16) {
       //tap on empty tile
       return [];
     }
@@ -91,13 +89,12 @@ class GameState {
       } else {
         //Add to animation list
         int affectedTileIndex = findIndexOfTile(previousTile);
-        int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
         bool isCurrentlyInCorrectPos = boardArr[affectedTileIndex] == (affectedTileIndex + 1);
         tmpAnimationList = [...tmpAnimationList, [previousTile - 1 , affectedTileColumn-1, 0, 1, 1, isCurrentlyInCorrectPos ? 1 : 0, 0]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
-        if(currentTile == 16) {
+        if (currentTile == 16) {
           for (int i = 0; i< tmpSwapList.length; i++) {
             swapPosition(tmpSwapList[i], 16);
           }
@@ -121,13 +118,12 @@ class GameState {
       } else {
         //Add to animation list
         int affectedTileIndex = findIndexOfTile(previousTile);
-        int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
         bool isCurrentlyInCorrectPos = boardArr[affectedTileIndex] == (affectedTileIndex + 1);
         tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileColumn+1, 0, 1, 1, isCurrentlyInCorrectPos ? 1 : 0, 1]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
-        if(currentTile == 16) {
+        if (currentTile == 16) {
           for (int i = 0; i< tmpSwapList.length; i++) {
             swapPosition(tmpSwapList[i], 16);
           }
@@ -153,12 +149,11 @@ class GameState {
         //Add to animation list
         int affectedTileIndex = findIndexOfTile(previousTile);
         int affectedTileRow = affectedTileIndex ~/ 4;
-        int affectedTileColumn = affectedTileIndex % 4;
         bool isCurrentlyInCorrectPos = boardArr[affectedTileIndex] == (affectedTileIndex + 1);
         tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileRow - 1, 1, 0, 1, isCurrentlyInCorrectPos ? 1 : 0, 1]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
-        if(currentTile == 16) {
+        if (currentTile == 16) {
           for (int i = 0; i< tmpSwapList.length; i++) {
             swapPosition(tmpSwapList[i], 16);
           }
@@ -183,12 +178,11 @@ class GameState {
         //Add to animation list
         int affectedTileIndex = findIndexOfTile(previousTile);
         int affectedTileRow = affectedTileIndex ~/ 4;
-        int affectedTileColumn = affectedTileIndex % 4;
         bool isCurrentlyInCorrectPos = boardArr[affectedTileIndex] == (affectedTileIndex + 1);
         tmpAnimationList = [...tmpAnimationList, [previousTile - 1, affectedTileRow + 1, 1, 0, 1, isCurrentlyInCorrectPos ? 1 : 0, 0]];
         tmpSwapList = [previousTile, ...tmpSwapList];
 
-        if(currentTile == 16) {
+        if (currentTile == 16) {
           for (int i = 0; i< tmpSwapList.length; i++) {
             swapPosition(tmpSwapList[i], 16);
           }
@@ -207,26 +201,26 @@ class GameState {
     List<List<int>> animationListRow = [];
     List<List<int>> animationListCol = [];
     var rng = Random();
-    for(int i = 0; i < depth * 2; i++) {
+    for (int i = 0; i < depth * 2; i++) {
       while (true) {
         int direction = rng.nextInt(4);
         int randomTileNum = -1;
-        if(direction == 0) {
+        if (direction == 0) {
           randomTileNum = getTileAbove(16);
-        } else if(direction == 1) {
+        } else if (direction == 1) {
           randomTileNum = getTileBelow(16);
-        } else if(direction == 2) {
+        } else if (direction == 2) {
           randomTileNum = getTileLeft(16);
-        } else if(direction == 3) {
+        } else if (direction == 3) {
           randomTileNum = getTileRight(16);
         }
 
-        if(randomTileNum == -1) {
+        if (randomTileNum == -1) {
             continue;
         }
 
         List<List<int>> animationPlaylist = tap(-1, tileNum: randomTileNum);
-        for(int i=0;i<animationPlaylist.length;i++) {
+        for (int i = 0; i < animationPlaylist.length; i++) {
           int value = 0;
           (animationPlaylist[i][6] == 1) ? value = 10 : value = -10;
           zIndex[animationPlaylist[i][0]] += value;
@@ -235,32 +229,20 @@ class GameState {
         break;
       }
     }
-    for (int i=0;i<boardArr.length-1;i++){
+    for (int i = 0; i < boardArr.length - 1; i++) {
         int affectedTileIndex = findIndexOfTile(i+1);
         int affectedTileRow = affectedTileIndex ~/ 4;
         int affectedTileColumn = affectedTileIndex % 4;
         animationListRow.add([i, affectedTileRow, 1, 0, 1]); 
         animationListCol.add([i, affectedTileColumn, 0, 1, 1]); 
     }
-    printBoard();
     numMoves = 0; //reset num moves
 
-    if(isWinningState()) {
+    if (isWinningState()) {
       return shuffleBoard(depth); //handle case where shuffling goes back to original position
     }
 
     return [animationListRow, animationListCol];
-  }
-
-  void printBoard() {
-    String printString = "";
-    for (int i = 0; i< boardArr.length; i++) {
-      if(i != 0 && i%4 == 0) {
-        printString += "\n";
-      }
-      printString += boardArr[i].toString() + "\t";
-    }
-    print(printString);
   }
 
   void swapPosition(int tile1, int tile2) {
@@ -276,7 +258,7 @@ class GameState {
 
   int getTileAbove(int tile) {
     int tileIndex = findIndexOfTile(tile);
-    if(tileIndex > 3) {
+    if (tileIndex > 3) {
       return boardArr[tileIndex - 4];
     } else {
       return -1; //out of bound
@@ -285,7 +267,7 @@ class GameState {
 
   int getTileBelow(int tile) {
     int tileIndex = findIndexOfTile(tile);
-    if(tileIndex <= 11) {
+    if (tileIndex <= 11) {
       return boardArr[tileIndex + 4];
     } else {
       return -1; //out of bound
@@ -294,7 +276,7 @@ class GameState {
 
   int getTileLeft(int tile) {
     int tileIndex = findIndexOfTile(tile);
-    if(tileIndex % 4 != 0) {
+    if (tileIndex % 4 != 0) {
       return boardArr[tileIndex - 1];
     } else {
       return -1; //out of bound
@@ -303,7 +285,7 @@ class GameState {
 
   int getTileRight(int tile) {
     int tileIndex = findIndexOfTile(tile);
-    if(tileIndex % 4 != 3) {
+    if (tileIndex % 4 != 3) {
       return boardArr[tileIndex + 1];
     } else {
       return -1; //out of bound

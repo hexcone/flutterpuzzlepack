@@ -9,7 +9,6 @@ class LoadingScreen extends StatefulWidget {
   State<LoadingScreen> createState() => _LoadingScreenState();
 }
 
-
 class _LoadingScreenState extends State<LoadingScreen> {
 
   Artboard? _riveArtboardLoader;
@@ -17,25 +16,20 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    rootBundle.load('assets/loader.riv').then(
-          (data) async {
-        // Load the RiveFile from the binary data.
-        final file = RiveFile.import(data);
+    rootBundle.load('assets/loader.riv').then((data) async {
+      // Load the RiveFile from the binary data.
+      final file = RiveFile.import(data);
 
-        // The artboard is the root of the animation and gets drawn in the
-        // Rive widget.
-        final artboard = file.mainArtboard;
-        var controller = SimpleAnimation('infinite 2');
-        if (controller != null) {
-          artboard.addController(controller);
-        }
-        setState(() => _riveArtboardLoader = artboard);
-      },
-    );
+      // The artboard is the root of the animation and gets drawn in the
+      // Rive widget.
+      final artboard = file.mainArtboard;
+      var controller = SimpleAnimation('infinite 2');
+      artboard.addController(controller);
+      setState(() => _riveArtboardLoader = artboard);
+    });
   }
 
   Widget build(BuildContext context) {
-
     return 
     WillPopScope(
       onWillPop: () { 
