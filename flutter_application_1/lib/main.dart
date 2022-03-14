@@ -175,7 +175,7 @@ class _LanguageTilesStateMachineState extends State<LanguageTilesStateMachine> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     int extraTopPadding = 0;
-    if (defaultTargetPlatform == TargetPlatform.android ||defaultTargetPlatform == TargetPlatform.iOS) {
+    if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
       extraTopPadding = 100;
     }
     else if (defaultTargetPlatform == TargetPlatform.linux || defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.windows) {

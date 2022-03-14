@@ -249,7 +249,6 @@ class _NavState extends State<NavWidget> {
                   child: GestureDetector(
                     onTapDown: (_) {
                       Get.offAllNamed("/");
-
                     },
                     child: SizedBox(
                       width: 64,
