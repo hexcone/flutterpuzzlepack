@@ -170,7 +170,7 @@ class _LevelPickerState extends State<LevelPicker> {
                         },
                         child: GestureDetector(
                           onTapDown: (_) {
-                            globals.difficulty = 2;
+                            globals.difficulty = 10;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -214,7 +214,7 @@ class _LevelPickerState extends State<LevelPicker> {
                         },
                         child: GestureDetector(
                           onTapDown: (_) {
-                            globals.difficulty = 20;
+                            globals.difficulty = 25;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -258,7 +258,7 @@ class _LevelPickerState extends State<LevelPicker> {
                         },
                         child: GestureDetector(
                           onTapDown: (_) {
-                            globals.difficulty = 100;
+                            globals.difficulty = 50;
                             Navigator.push(
                               context,
                               MaterialPageRoute(

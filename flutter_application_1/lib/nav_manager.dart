@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/exit_popup.dart';
 import 'package:flutter_application_1/storage_manager.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_application_1/globals.dart' as globals;
@@ -218,12 +219,16 @@ class _NavState extends State<NavWidget> {
                         middleText: getCreditsString()
                       );
                     },
-                    child: _riveArtboardLogo == null
-                        ? const SizedBox()
-                        : Container(
-                      child: Rive(
-                        fit: BoxFit.contain,
-                        artboard: _riveArtboardLogo!,
+                    child: GestureDetector(
+                      onTapDown: (_) {
+                        showExitPopup(Get.context, true);
+                      },
+                      child: SizedBox(
+                        width: 64,
+                        height: 64,
+                        child: Rive(
+                          artboard: _riveArtboardHome!,
+                        ),
                       ),
                     ),
                   ),

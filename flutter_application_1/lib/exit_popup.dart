@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-Future<bool> showExitPopup(context) async{
-  return await showDialog(
+Future<bool> showExitPopup(context, isGetX) async{
+  dynamic res = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -10,15 +11,20 @@ Future<bool> showExitPopup(context) async{
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Do you want to exit?"),
+                Text("Do you want to leave?"),
                 SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
+                          if (isGetX) {
+                            Get.offAllNamed("/");
+                          } else {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                          }
                         },
                         child: Text("Yes"),
                         style: ElevatedButton.styleFrom(
@@ -29,7 +35,11 @@ Future<bool> showExitPopup(context) async{
                     Expanded(
                         child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        if (isGetX) {
+                          Get.back();
+                        } else {
+                          Navigator.of(context).pop();
+                        }
                       },
                       child: Text("No", style: TextStyle(color: Colors.black)),
                       style: ElevatedButton.styleFrom(
@@ -43,4 +53,9 @@ Future<bool> showExitPopup(context) async{
           ),
         );
       });
+    if (res != null) {
+      return res;
+    } else {
+      return Future.value(false);
+    }
 } 
